@@ -1,0 +1,82 @@
+/* FIFA 2026 Analytics — dark glassmorphism theme */
+
+.stApp {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(0, 200, 150, 0.15), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 0%, rgba(124, 77, 255, 0.18), transparent),
+    #0b0f19;
+}
+
+/* Hero section: stadium-light gradient, no external imagery needed */
+.hero {
+  position: relative;
+  padding: 3.2rem 2.4rem;
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse 70% 90% at 15% 10%, rgba(0, 200, 150, 0.35), transparent),
+    radial-gradient(ellipse 60% 80% at 85% 20%, rgba(124, 77, 255, 0.35), transparent),
+    linear-gradient(160deg, #101a2e 0%, #0b0f19 70%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 1.6rem;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(5, 8, 15, 0.25), rgba(5, 8, 15, 0.55));
+  pointer-events: none;
+}
+.hero h1 {
+  position: relative; z-index: 1;
+  font-size: 2.3rem; font-weight: 800; letter-spacing: -0.5px;
+  background: linear-gradient(90deg, #ffffff, #00c896);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin: 0 0 0.4rem 0;
+}
+.hero p {
+  position: relative; z-index: 1;
+  color: #b9c2d6; font-size: 1.05rem; max-width: 46rem; margin: 0;
+}
+
+/* Glass cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  height: 100%;
+}
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 200, 150, 0.45);
+  box-shadow: 0 12px 32px rgba(0, 200, 150, 0.12);
+}
+.glass-card .metric-label {
+  color: #8b94ab; font-size: 0.78rem; text-transform: uppercase;
+  letter-spacing: 1.2px; margin-bottom: 0.35rem;
+}
+.glass-card .metric-value {
+  color: #ffffff; font-size: 1.9rem; font-weight: 750; line-height: 1.1;
+}
+.glass-card .metric-delta { color: #00c896; font-size: 0.85rem; margin-top: 0.3rem; }
+
+/* Section titles */
+.section-title {
+  color: #e8eaf0; font-size: 1.25rem; font-weight: 700;
+  margin: 1.6rem 0 0.8rem 0; padding-left: 0.75rem;
+  border-left: 4px solid #00c896; border-radius: 2px;
+}
+
+/* Sidebar polish */
+section[data-testid="stSidebar"] {
+  background: rgba(15, 21, 36, 0.92);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Dataframes and tabs rounding */
+div[data-testid="stDataFrame"] { border-radius: 14px; overflow: hidden; }
+button[data-baseweb="tab"] { border-radius: 10px 10px 0 0; }
