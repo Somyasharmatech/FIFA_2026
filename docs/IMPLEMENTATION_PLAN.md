@@ -13,7 +13,7 @@ working, tested state.
 - SQLite ingestion layer (`src/data/database.py`) + CLI (`scripts/collect_data.py`)
 - README, requirements, Dockerfile, .gitignore, unit tests
 
-## Milestone 2 — Cleaning, EDA & Feature Engineering
+## Milestone 2 — Cleaning, EDA & Feature Engineering ✅
 
 - Data cleaning pipeline: country-name normalization (via `former_names`),
   deduplication, type coercion, missing-value strategy

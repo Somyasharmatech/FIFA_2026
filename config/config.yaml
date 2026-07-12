@@ -27,6 +27,19 @@ logging:
   level: "INFO"
   format: "%(asctime)s | %(name)s | %(levelname)s | %(message)s"
 
+# Elo rating engine (eloratings.net methodology)
+elo:
+  base_rating: 1500.0
+  home_advantage: 100.0
+  k_friendly: 20.0
+  k_qualifier: 30.0
+  k_continental: 40.0
+  k_world_cup: 60.0
+
+# Feature engineering
+features:
+  form_window: 10        # rolling window (matches) for recent form
+
 # ------------------------------------------------------------------
 # Public datasets (CC0 / openly licensed). Each entry becomes a raw
 # CSV in data/raw/ and a table in SQLite. Never hardcode predictions.

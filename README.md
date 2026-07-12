@@ -87,6 +87,13 @@ cp .env.example .env             # adjust values if needed
 python scripts/collect_data.py
 ```
 
+**1b. Build the cleaned dataset, Elo ratings, and feature matrix:**
+
+```bash
+python scripts/build_features.py
+python scripts/run_eda.py        # EDA tables + charts into reports/
+```
+
 **2. Launch the dashboard (pages arrive in later milestones):**
 
 ```bash
@@ -115,8 +122,8 @@ Python · Pandas · NumPy · Matplotlib · Plotly · Scikit-learn · XGBoost · 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
 | M1 | Scaffolding, config, data collection, SQLite | ✅ Done |
-| M2 | Cleaning, EDA, feature engineering | ⏳ Next |
-| M3 | ML training, evaluation, model selection | Planned |
+| M2 | Cleaning, EDA, feature engineering | ✅ Done |
+| M3 | ML training, evaluation, model selection | ⏳ Next |
 | M4 | Monte Carlo simulation & predictions | Planned |
 | M5 | SHAP explainability | Planned |
 | M6 | Streamlit dashboard & premium UI | Planned |
