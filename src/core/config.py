@@ -39,6 +39,25 @@ class HttpConfig:
 
 
 @dataclass(frozen=True)
+class EloSettings:
+    """Elo rating engine constants."""
+
+    base_rating: float = 1500.0
+    home_advantage: float = 100.0
+    k_friendly: float = 20.0
+    k_qualifier: float = 30.0
+    k_continental: float = 40.0
+    k_world_cup: float = 60.0
+
+
+@dataclass(frozen=True)
+class FeatureSettings:
+    """Feature engineering parameters."""
+
+    form_window: int = 10
+
+
+@dataclass(frozen=True)
 class AppConfig:
     """Fully resolved application configuration."""
 
@@ -52,6 +71,8 @@ class AppConfig:
     log_level: str
     log_format: str
     http: HttpConfig
+    elo: EloSettings = field(default_factory=EloSettings)
+    features: FeatureSettings = field(default_factory=FeatureSettings)
     datasets: dict[str, DatasetConfig] = field(default_factory=dict)
 
     def ensure_directories(self) -> None:
@@ -123,5 +144,7 @@ def load_config(config_path: Path | str = DEFAULT_CONFIG_PATH) -> AppConfig:
             backoff_seconds=float(http_cfg["backoff_seconds"]),
             user_agent=http_cfg["user_agent"],
         ),
+        elo=EloSettings(**raw.get("elo", {})),
+        features=FeatureSettings(**raw.get("features", {})),
         datasets=datasets,
     )
