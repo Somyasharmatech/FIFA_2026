@@ -1,0 +1,54 @@
+# =============================================================
+# FIFA World Cup 2026 Analytics Platform - central configuration
+# Environment variables (see .env.example) override these values.
+# =============================================================
+
+project:
+  name: "FIFA World Cup 2026 Analytics & AI Prediction Platform"
+  version: "0.1.0"
+
+paths:
+  data_dir: "data"
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  models_dir: "models"
+  logs_dir: "logs"
+
+database:
+  path: "database/fifa_analytics.db"
+
+http:
+  timeout_seconds: 30
+  max_retries: 3
+  backoff_seconds: 2.0
+  user_agent: "FIFA2026-Analytics/0.1 (research project)"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(name)s | %(levelname)s | %(message)s"
+
+# ------------------------------------------------------------------
+# Public datasets (CC0 / openly licensed). Each entry becomes a raw
+# CSV in data/raw/ and a table in SQLite. Never hardcode predictions.
+# ------------------------------------------------------------------
+datasets:
+  international_results:
+    url: "https://raw.githubusercontent.com/martj42/international_results/master/results.csv"
+    filename: "international_results.csv"
+    table: "raw_results"
+    description: "All international football matches since 1872 (CC0)."
+  shootouts:
+    url: "https://raw.githubusercontent.com/martj42/international_results/master/shootouts.csv"
+    filename: "shootouts.csv"
+    table: "raw_shootouts"
+    description: "Penalty shootout outcomes (CC0)."
+  goalscorers:
+    url: "https://raw.githubusercontent.com/martj42/international_results/master/goalscorers.csv"
+    filename: "goalscorers.csv"
+    table: "raw_goalscorers"
+    description: "Goal-level data per match (CC0)."
+  former_names:
+    url: "https://raw.githubusercontent.com/martj42/international_results/master/former_names.csv"
+    filename: "former_names.csv"
+    table: "raw_former_names"
+    description: "Historical country name mapping for normalization (CC0)."

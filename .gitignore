@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Environment
+.env
+
+# Data & artifacts (regenerated, never committed)
+data/raw/*
+data/processed/*
+database/*.db
+database/*.sqlite3
+models/*.pkl
+models/*.joblib
+models/*.cbm
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!database/.gitkeep
+!models/.gitkeep
+
+# Notebooks
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+logs/*.log
+!logs/.gitkeep
