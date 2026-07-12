@@ -40,6 +40,15 @@ elo:
 features:
   form_window: 10        # rolling window (matches) for recent form
 
+# Monte Carlo tournament simulation
+simulation:
+  n_runs: 100000
+  random_state: 42
+  hosts:                  # WC2026 co-hosts keep home advantage
+    - "United States"
+    - "Mexico"
+    - "Canada"
+
 # Model training
 models:
   min_year: 1980          # earliest match year used for training

@@ -35,7 +35,7 @@ working, tested state.
 - Metrics: accuracy, precision, recall, F1, ROC AUC, confusion matrix, ROC curves
 - Automatic best-model selection and artifact persistence (`models/`)
 
-## Milestone 4 — Monte Carlo Simulation & Predictions
+## Milestone 4 — Monte Carlo Simulation & Predictions ✅
 
 - WC2026 tournament structure (48 teams, groups + knockout bracket)
 - Match probability engine driven by the trained model (never hardcoded)

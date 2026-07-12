@@ -58,6 +58,15 @@ class FeatureSettings:
 
 
 @dataclass(frozen=True)
+class SimulationSettings:
+    """Monte Carlo simulation parameters."""
+
+    n_runs: int = 100_000
+    random_state: int = 42
+    hosts: tuple[str, ...] = ("United States", "Mexico", "Canada")
+
+
+@dataclass(frozen=True)
 class ModelSettings:
     """Model training parameters."""
 
@@ -86,6 +95,7 @@ class AppConfig:
     elo: EloSettings = field(default_factory=EloSettings)
     features: FeatureSettings = field(default_factory=FeatureSettings)
     models: ModelSettings = field(default_factory=ModelSettings)
+    simulation: SimulationSettings = field(default_factory=SimulationSettings)
     datasets: dict[str, DatasetConfig] = field(default_factory=dict)
 
     def ensure_directories(self) -> None:
@@ -160,5 +170,14 @@ def load_config(config_path: Path | str = DEFAULT_CONFIG_PATH) -> AppConfig:
         elo=EloSettings(**raw.get("elo", {})),
         features=FeatureSettings(**raw.get("features", {})),
         models=ModelSettings(**raw.get("models", {})),
+        simulation=_simulation_settings(raw.get("simulation", {})),
         datasets=datasets,
     )
+
+
+def _simulation_settings(section: dict[str, Any]) -> SimulationSettings:
+    """Build simulation settings, converting the hosts list to a tuple."""
+    values = dict(section)
+    if "hosts" in values:
+        values["hosts"] = tuple(values["hosts"])
+    return SimulationSettings(**values)

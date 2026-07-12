@@ -100,6 +100,16 @@ python scripts/run_eda.py        # EDA tables + charts into reports/
 python scripts/train_models.py   # leaderboard + champion model in models/
 ```
 
+**1d. Simulate the World Cup 2026 (100,000 runs by default):**
+
+```bash
+python scripts/run_simulation.py             # probabilities + charts + CSV export
+python scripts/run_simulation.py --runs 200000
+```
+
+When the official draw is announced, place it in `data/wc2026_groups.csv`
+(columns `group,team`); until then, groups are seeded from current Elo ratings.
+
 **2. Launch the dashboard (pages arrive in later milestones):**
 
 ```bash
@@ -130,8 +140,8 @@ Python · Pandas · NumPy · Matplotlib · Plotly · Scikit-learn · XGBoost · 
 | M1 | Scaffolding, config, data collection, SQLite | ✅ Done |
 | M2 | Cleaning, EDA, feature engineering | ✅ Done |
 | M3 | ML training, evaluation, model selection | ✅ Done |
-| M4 | Monte Carlo simulation & predictions | ⏳ Next |
-| M5 | SHAP explainability | Planned |
+| M4 | Monte Carlo simulation & predictions | ✅ Done |
+| M5 | SHAP explainability | ⏳ Next |
 | M6 | Streamlit dashboard & premium UI | Planned |
 | M7 | Docker hardening, docs, screenshots, QA | Planned |
 
