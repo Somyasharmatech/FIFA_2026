@@ -94,6 +94,12 @@ python scripts/build_features.py
 python scripts/run_eda.py        # EDA tables + charts into reports/
 ```
 
+**1c. Train all six models and select the champion automatically:**
+
+```bash
+python scripts/train_models.py   # leaderboard + champion model in models/
+```
+
 **2. Launch the dashboard (pages arrive in later milestones):**
 
 ```bash
@@ -123,8 +129,8 @@ Python · Pandas · NumPy · Matplotlib · Plotly · Scikit-learn · XGBoost · 
 |-----------|-------|--------|
 | M1 | Scaffolding, config, data collection, SQLite | ✅ Done |
 | M2 | Cleaning, EDA, feature engineering | ✅ Done |
-| M3 | ML training, evaluation, model selection | ⏳ Next |
-| M4 | Monte Carlo simulation & predictions | Planned |
+| M3 | ML training, evaluation, model selection | ✅ Done |
+| M4 | Monte Carlo simulation & predictions | ⏳ Next |
 | M5 | SHAP explainability | Planned |
 | M6 | Streamlit dashboard & premium UI | Planned |
 | M7 | Docker hardening, docs, screenshots, QA | Planned |

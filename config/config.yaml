@@ -40,6 +40,15 @@ elo:
 features:
   form_window: 10        # rolling window (matches) for recent form
 
+# Model training
+models:
+  min_year: 1980          # earliest match year used for training
+  test_start_year: 2018   # temporal split: evaluate on matches from this year on
+  cv_folds: 4             # TimeSeriesSplit folds for tuning
+  n_iter: 15              # randomized-search candidates per model
+  random_state: 42
+  selection_metric: "f1_macro"   # metric used to crown the champion model
+
 # ------------------------------------------------------------------
 # Public datasets (CC0 / openly licensed). Each entry becomes a raw
 # CSV in data/raw/ and a table in SQLite. Never hardcode predictions.
