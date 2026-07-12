@@ -48,7 +48,7 @@ working, tested state.
 - Global feature importance + per-prediction explanations
 - "Explain why" narratives for the Prediction page
 
-## Milestone 6 — Streamlit Dashboard & Premium UI
+## Milestone 6 — Streamlit Dashboard & Premium UI ✅
 
 - Pages: Home, Tournament Overview, Historical Analysis, Country Comparison,
   Match Statistics, Prediction, Simulation, Model Performance, Insights, About

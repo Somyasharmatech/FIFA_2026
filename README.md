@@ -117,11 +117,14 @@ python scripts/explain_model.py --home Brazil --away France   # explain one fixt
 When the official draw is announced, place it in `data/wc2026_groups.csv`
 (columns `group,team`); until then, groups are seeded from current Elo ratings.
 
-**2. Launch the dashboard (pages arrive in later milestones):**
+**2. Launch the dashboard (10 pages, dark glassmorphism UI):**
 
 ```bash
 streamlit run app/Home.py
 ```
+
+Pages: Home · Tournament Overview · Historical Analysis · Country Comparison ·
+Match Statistics · Prediction · Simulation · Model Performance · Insights · About
 
 **3. Run with Docker:**
 
@@ -149,8 +152,8 @@ Python · Pandas · NumPy · Matplotlib · Plotly · Scikit-learn · XGBoost · 
 | M3 | ML training, evaluation, model selection | ✅ Done |
 | M4 | Monte Carlo simulation & predictions | ✅ Done |
 | M5 | SHAP explainability | ✅ Done |
-| M6 | Streamlit dashboard & premium UI | ⏳ Next |
-| M7 | Docker hardening, docs, screenshots, QA | Planned |
+| M6 | Streamlit dashboard & premium UI | ✅ Done |
+| M7 | Docker hardening, docs, screenshots, QA | ⏳ Next |
 
 ## 📜 Data Sources & Licensing
 
