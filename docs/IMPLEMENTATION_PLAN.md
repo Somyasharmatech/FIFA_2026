@@ -42,7 +42,7 @@ working, tested state.
 - 100,000+ tournament simulations: champion / finalist / semifinalist
   probabilities, simulation history, CSV export
 
-## Milestone 5 — Explainable AI
+## Milestone 5 — Explainable AI ✅
 
 - SHAP explainers for the selected model
 - Global feature importance + per-prediction explanations
