@@ -107,6 +107,13 @@ python scripts/run_simulation.py             # probabilities + charts + CSV expo
 python scripts/run_simulation.py --runs 200000
 ```
 
+**1e. Explain the model with SHAP:**
+
+```bash
+python scripts/explain_model.py                          # global importance + beeswarm
+python scripts/explain_model.py --home Brazil --away France   # explain one fixture
+```
+
 When the official draw is announced, place it in `data/wc2026_groups.csv`
 (columns `group,team`); until then, groups are seeded from current Elo ratings.
 
@@ -141,8 +148,8 @@ Python · Pandas · NumPy · Matplotlib · Plotly · Scikit-learn · XGBoost · 
 | M2 | Cleaning, EDA, feature engineering | ✅ Done |
 | M3 | ML training, evaluation, model selection | ✅ Done |
 | M4 | Monte Carlo simulation & predictions | ✅ Done |
-| M5 | SHAP explainability | ⏳ Next |
-| M6 | Streamlit dashboard & premium UI | Planned |
+| M5 | SHAP explainability | ✅ Done |
+| M6 | Streamlit dashboard & premium UI | ⏳ Next |
 | M7 | Docker hardening, docs, screenshots, QA | Planned |
 
 ## 📜 Data Sources & Licensing
