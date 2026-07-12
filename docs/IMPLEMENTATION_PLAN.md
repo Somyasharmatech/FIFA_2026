@@ -26,7 +26,7 @@ working, tested state.
 - EDA notebook + statistical analysis (SciPy/Statsmodels): goal trends, win
   percentages, continent performance, correlation analysis
 
-## Milestone 3 — ML Training, Evaluation & Model Selection
+## Milestone 3 — ML Training, Evaluation & Model Selection ✅
 
 - Match-outcome dataset builder (train/validation/test with temporal split)
 - Train: Logistic Regression, Random Forest, Gradient Boosting, XGBoost,

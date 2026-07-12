@@ -58,6 +58,18 @@ class FeatureSettings:
 
 
 @dataclass(frozen=True)
+class ModelSettings:
+    """Model training parameters."""
+
+    min_year: int = 1980
+    test_start_year: int = 2018
+    cv_folds: int = 4
+    n_iter: int = 15
+    random_state: int = 42
+    selection_metric: str = "f1_macro"
+
+
+@dataclass(frozen=True)
 class AppConfig:
     """Fully resolved application configuration."""
 
@@ -73,6 +85,7 @@ class AppConfig:
     http: HttpConfig
     elo: EloSettings = field(default_factory=EloSettings)
     features: FeatureSettings = field(default_factory=FeatureSettings)
+    models: ModelSettings = field(default_factory=ModelSettings)
     datasets: dict[str, DatasetConfig] = field(default_factory=dict)
 
     def ensure_directories(self) -> None:
@@ -146,5 +159,6 @@ def load_config(config_path: Path | str = DEFAULT_CONFIG_PATH) -> AppConfig:
         ),
         elo=EloSettings(**raw.get("elo", {})),
         features=FeatureSettings(**raw.get("features", {})),
+        models=ModelSettings(**raw.get("models", {})),
         datasets=datasets,
     )
