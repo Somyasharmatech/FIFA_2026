@@ -1,0 +1,28 @@
+# Core data stack
+pandas==2.2.3
+numpy==1.26.4
+scipy==1.13.1
+statsmodels==0.14.4
+
+# Machine learning
+scikit-learn==1.5.2
+xgboost==2.1.1
+lightgbm==4.5.0
+catboost==1.2.7
+shap==0.46.0
+
+# Visualization
+matplotlib==3.9.2
+plotly==5.24.1
+
+# Application
+streamlit==1.39.0
+
+# Infrastructure
+requests==2.32.3
+PyYAML==6.0.2
+python-dotenv==1.0.1
+joblib==1.4.2
+
+# Testing & quality
+pytest==8.3.3
