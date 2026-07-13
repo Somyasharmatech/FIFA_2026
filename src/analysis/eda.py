@@ -83,7 +83,7 @@ def home_advantage_test(matches: pd.DataFrame) -> dict[str, Any]:
     Returns:
         Dict with group means, t-statistic, p-value, and sample size.
     """
-    non_neutral = matches[~matches["neutral"]]
+    non_neutral = matches[matches["neutral"] == False]
     t_stat, p_value = stats.ttest_ind(
         non_neutral["home_score"], non_neutral["away_score"], equal_var=False
     )

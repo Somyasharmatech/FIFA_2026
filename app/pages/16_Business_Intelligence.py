@@ -76,7 +76,7 @@ total_stats["Win Rate (%)"] = (total_stats["wins"] / total_stats["matches"]) * 1
 total_stats = total_stats.sort_values("Win Rate (%)", ascending=False).head(15)
 
 st.plotly_chart(
-    charts.bar_chart(total_stats, "Win Rate (%)", "Team", "All-Time Win Rate (Min. 200 Matches)", horizontal=True),
+    charts.bar_chart(total_stats, "Win Rate (%)", "home_team", "All-Time Win Rate (Min. 200 Matches)", horizontal=True),
     use_container_width=True
 )
 
