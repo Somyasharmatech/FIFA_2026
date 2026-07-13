@@ -12,11 +12,13 @@ catboost>=1.2.7
 shap>=0.46.0
 
 # Visualization
-matplotlib>=3.9.2
+matplotlib>=3.10.0
 plotly>=5.24.1
+Pillow>=11.0.0
 
 # Application
 streamlit>=1.39.0
+fpdf2>=2.7.9
 
 # Infrastructure
 requests>=2.32.3
