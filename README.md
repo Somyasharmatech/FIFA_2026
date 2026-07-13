@@ -1,170 +1,124 @@
-# ⚽ FIFA World Cup 2026 Analytics & AI Prediction Platform
+# \u26bd FIFA 2026 Analytics & AI Prediction Platform
 
-> An end-to-end, production-grade football analytics platform that predicts the FIFA World Cup 2026 semifinalists, finalists, and champion using machine learning, Monte Carlo simulation, and explainable AI — delivered through a modern Streamlit dashboard.
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.42+-FF4B4B.svg)](https://streamlit.io/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com/)
+[![CatBoost](https://img.shields.io/badge/CatBoost-1.2-yellow.svg)](https://catboost.ai/)
+[![Docker](https://img.shields.io/badge/Docker-Supported-2496ED.svg)](https://docker.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-![Python](https://img.shields.io/badge/Python-3.13-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-Version%202.5-orange)
+> **Predicting the beautiful game with mathematics.** 
+> A production-grade machine learning platform that ingests historical football data, engineers advanced Team DNA metrics, trains highly-calibrated champion models (CatBoost/XGBoost/LightGBM), and simulates the entire FIFA World Cup 2026 tournament 100,000 times using a vectorized Monte Carlo engine.
 
 ---
 
-## 🎯 What This Platform Does
+## \U0001f680 Key Features
 
-1. **Collects** historical football data automatically (international matches, World Cups, FIFA rankings, shootouts, goalscorers).
-2. **Cleans & analyzes** the data with professional EDA and statistical analysis.
-3. **Engineers** advanced football features (Elo ratings, recent form, attack/defense strength, head-to-head, tournament importance).
-4. **Trains & compares** six ML models (Logistic Regression, Random Forest, Gradient Boosting, XGBoost, LightGBM, CatBoost) and auto-selects the best.
-5. **Simulates** the World Cup 2026 tournament 100,000+ times via Monte Carlo simulation.
-6. **Predicts** semifinal winners, finalists, and the champion — with probabilities, never hardcoded.
-7. **Explains** every prediction using SHAP (Explainable AI) with human-readable narratives.
-8. **Exposes** predictions via a FastAPI REST Layer.
-9. **Visualizes** everything in a dark-theme, glassmorphism Streamlit dashboard with interactive Plotly maps and MLOps tracking.
-10. **Generates** professional PDF analytics reports.
+- **Automated ML Pipeline**: Implements TimeSeriesSplit cross-validation across 6 classifier architectures. Automatically calibrates probabilities via Platt Scaling and persists the champion model.
+- **Advanced Feature Engineering**: Dynamically calculates rolling Elo ratings, Attack/Defense Strength indices (xG proxies), Form Scores, and Tournament Momentum without data leakage.
+- **Monte Carlo Simulation**: Vectorized execution of 100,000 parallel tournament brackets natively resolving Group Stage tie-breakers and knockout seedings in ~15 seconds.
+- **Explainable AI (XAI)**: Full SHAP (SHapley Additive exPlanations) integration to provide human-readable tactical reasoning for every predicted probability.
+- **Glassmorphism Dashboard**: 19-page responsive UI built with Streamlit and Plotly, styled natively via injected CSS for a dark, premium aesthetic.
+- **RESTful API Layer**: Headless FastAPI layer providing sub-millisecond inference and simulation metrics to downstream clients.
 
-## 🏗️ Architecture (Summary)
+---
 
-```
-Data Sources (public CSV datasets)
-        │
-        ▼
-Collectors (retry + cache) ─▶ data/raw/ ─▶ SQLite (database/)
-        │
-        ▼
-Cleaning ─▶ Feature Engineering ─▶ Model Training ─▶ Model Registry (models/)
-        │                                   │
-        ▼                                   ▼
-Monte Carlo Simulation ◀─────── Best Model + SHAP Explainability
-        │
-        ▼
-Streamlit Dashboard (app/)
-```
+## \U0001f3f0 Architecture
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full diagram and [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) for the milestone roadmap.
+The platform strictly adheres to a decoupled, modular architecture:
 
-## 📁 Project Structure
+1. **Data Ingestion (`src/data`)**: ETL pipelines consuming raw international CSV datasets.
+2. **Feature Store (`src/features`)**: State builders dynamically deriving temporal variables.
+3. **Model Registry (`src/models`)**: Automated trainer, calibrator, and evaluator.
+4. **Simulation Engine (`src/simulation`)**: Deterministic Monte Carlo tournament runner.
+5. **API Layer (`app/api.py`)**: FastAPI interface.
+6. **Presentation Layer (`app/`)**: 19 Streamlit UI components.
 
-```
-FIFA_2026/
-├── app/                    # Streamlit application
-│   ├── Home.py             # Dashboard entry point
-│   ├── pages/              # Dashboard pages (Milestone 6)
-│   └── assets/             # Locally stored, licensed images & CSS
-├── config/
-│   └── config.yaml         # Central configuration
-├── data/
-│   ├── raw/                # Downloaded datasets (gitignored)
-│   └── processed/          # Cleaned datasets (gitignored)
-├── database/               # SQLite database files (gitignored)
-├── docs/                   # Architecture & implementation plan
-├── models/                 # Trained model artifacts (gitignored)
-├── notebooks/              # EDA notebooks (Milestone 2)
-├── scripts/                # CLI entry points
-├── src/
-│   ├── core/               # Config loader, logging
-│   ├── data/               # Collectors + SQLite ingestion
-│   ├── features/           # Feature engineering (Milestone 2)
-│   ├── models/             # ML training & evaluation (Milestone 3)
-│   ├── simulation/         # Monte Carlo engine (Milestone 4)
-│   ├── explainability/     # SHAP explainers (Milestone 5)
-│   └── visualization/      # Reusable Plotly chart builders (Milestone 6)
-└── tests/                  # Unit tests
-```
+---
 
-## 🚀 Installation
+## \U0001f4c2 Folder Structure
+Refer to [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for a comprehensive repository breakdown.
 
+---
+
+## \U0001f6e0\ufe0f Technology Stack
+
+- **Backend**: Python 3.11+, FastAPI, SQLite3
+- **Machine Learning**: Scikit-Learn, CatBoost, XGBoost, LightGBM, SHAP, NumPy, Pandas
+- **Frontend / Visualization**: Streamlit, Plotly Express, Plotly Graph Objects
+- **Testing & CI**: Pytest, Pydantic
+- **Deployment**: Docker, Uvicorn
+
+---
+
+## \U0001f4be Installation & Local Development
+
+Refer to [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed instructions on:
+- Local Python Environment Setup
+- Data Ingestion & Pipeline Execution
+- Running the Dashboard (`streamlit run`)
+- Running the API (`uvicorn`)
+- Environment Variable Setup (`.env`)
+
+---
+
+## \U0001f433 Docker Usage
+
+The entire platform is Dockerized and ready for cloud deployment.
 ```bash
-git clone https://gitlab.com/somyasharmatech-group/FIFA_2026.git
-cd FIFA_2026
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env             # adjust values if needed
+# Build the image
+docker build -t fifa-2026-analytics .
+
+# Run the container (exposes Streamlit on 8501)
+docker run -p 8501:8501 fifa-2026-analytics
 ```
+*Note: Ensure the data pipeline has been executed locally prior to building the image so the `.db` and `.joblib` model artifacts are packaged into the container.*
 
-## 📖 Usage
+---
 
-**1. Collect all datasets and load them into SQLite:**
+## \U0001f310 API Usage
 
+When running the FastAPI layer (`uvicorn app.api:app`), interactive documentation is available at `http://localhost:8000/docs`.
+
+### Example: Predict Match
 ```bash
-python scripts/collect_data.py
+curl -X POST "http://localhost:8000/predict" \
+     -H "Content-Type: application/json" \
+     -d '{"home_team": "Argentina", "away_team": "France"}'
+```
+**Response**:
+```json
+{
+  "home_team": "Argentina",
+  "away_team": "France",
+  "home_win_prob": 0.3845,
+  "draw_prob": 0.2810,
+  "away_win_prob": 0.3345,
+  "expected_goals_home": 1.45,
+  "expected_goals_away": 1.32
+}
 ```
 
-**1b. Build the cleaned dataset, Elo ratings, and feature matrix:**
+---
 
-```bash
-python scripts/build_features.py
-python scripts/run_eda.py        # EDA tables + charts into reports/
-```
+## \U0001f4f8 Screenshots
 
-**1c. Train all six models and select the champion automatically:**
+*(Demo GIF placeholder - Coming Soon)*
 
-```bash
-python scripts/train_models.py   # leaderboard + champion model in models/
-```
+---
 
-**1d. Simulate the World Cup 2026 (100,000 runs by default):**
+## \U0001f5fa\ufe0f Future Roadmap
+- [ ] Integration with real-time sports APIs for live injury updates and roster form.
+- [ ] Implement Deep Learning architectures (e.g., LSTMs) for sequential match prediction.
+- [ ] Expand the simulation engine to track individual player Golden Boot metrics.
 
-```bash
-python scripts/run_simulation.py             # probabilities + charts + CSV export
-python scripts/run_simulation.py --runs 200000
-```
+---
 
-**1e. Explain the model with SHAP:**
+## \U0001f4dc License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-```bash
-python scripts/explain_model.py                          # global importance + beeswarm
-python scripts/explain_model.py --home Brazil --away France   # explain one fixture
-```
+---
 
-When the official draw is announced, place it in `data/wc2026_groups.csv`
-(columns `group,team`); until then, groups are seeded from current Elo ratings.
-
-**2. Launch the dashboard (10 pages, dark glassmorphism UI):**
-
-```bash
-streamlit run app/Home.py
-```
-
-Pages: Home · Tournament Overview · Historical Analysis · Country Comparison ·
-Match Statistics · Prediction · Simulation · Model Performance · Insights · About
-
-**3. Run with Docker:**
-
-```bash
-docker build -t fifa2026-analytics .
-docker run -p 8501:8501 fifa2026-analytics
-```
-
-**4. Run tests:**
-
-```bash
-pytest tests/ -v
-```
-
-**2b. Launch the REST API:**
-
-```bash
-uvicorn app.api:app --reload
-```
-
-## 🛠️ Tech Stack
-
-Python 3.13 · Pandas · Plotly Express · Scikit-learn · XGBoost · LightGBM · CatBoost · SHAP · FastAPI · SQLite · Streamlit · FPDF2 · Docker
-
-## 🗺️ Roadmap
-
-| Milestone | Scope | Status |
-|-----------|-------|--------|
-| M1-6 | Data Collection, EDA, ML, Monte Carlo, UI Dashboard | ✅ Done |
-| V2.5 | MLOps, REST API, BI Dashboards, PDF Gen, Architecture | ✅ Done |
-| V3.0 | Real-time tournament tracking, Cloud Deployment | ⏳ Next |
-
-## 📜 Data Sources & Licensing
-
-- **International match results (1872–present)** — [martj42/international_results](https://github.com/martj42/international_results) (CC0 public domain), including shootouts and goalscorers.
-- **FIFA rankings & Elo ratings** — integrated in Milestone 2 via public datasets; sources documented in `config/config.yaml`.
-- All imagery used in the dashboard is stored locally in `app/assets/` and properly licensed. No hotlinked copyrighted material.
-
-## 📄 License
-
-MIT
+## \U0001f64f Acknowledgements
+- Data sourced from historical international football datasets.
+- Built using incredible open-source frameworks: Streamlit, Plotly, and FastAPI.
