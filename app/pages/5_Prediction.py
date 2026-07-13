@@ -69,20 +69,22 @@ home = left.selectbox("Team 1", teams, index=0)
 away = right.selectbox("Team 2", teams, index=1)
 
 if home != away and st.button("Predict match", type="primary"):
-    p_home, p_draw, p_away = engine.match_probabilities(home, away)
+    with st.spinner("Analyzing match with AI Engine..."):
+        p_home, p_draw, p_away = engine.match_probabilities(home, away)
+        
+        frame = features.copy()
+        frame["neutral"] = frame["neutral"].astype(int)
+        background = frame[list(FEATURE_COLUMNS)].to_numpy(dtype=float)[:200]
+        explainer = ModelExplainer(loaded[0], FEATURE_COLUMNS, background)
+        vector = engine.feature_vector(home, away)
+        predicted_class = int(np.argmax([p_away, p_draw, p_home]))
+        contributions = explainer.explain_prediction(vector, predicted_class)
+
     metric_row([
         (f"{home} win", f"{p_home:.1%}", ""),
         ("Draw", f"{p_draw:.1%}", ""),
         (f"{away} win", f"{p_away:.1%}", ""),
     ])
-
-    frame = features.copy()
-    frame["neutral"] = frame["neutral"].astype(int)
-    background = frame[list(FEATURE_COLUMNS)].to_numpy(dtype=float)[:200]
-    explainer = ModelExplainer(loaded[0], FEATURE_COLUMNS, background)
-    vector = engine.feature_vector(home, away)
-    predicted_class = int(np.argmax([p_away, p_draw, p_home]))
-    contributions = explainer.explain_prediction(vector, predicted_class)
 
     st.markdown(
         f'<div class="glass-card">\U0001f4a1 <b>Why:</b> '

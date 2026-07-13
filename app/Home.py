@@ -13,13 +13,16 @@ from app.ui import hero, metric_row, section, setup_page  # noqa: E402
 
 setup_page("Home")
 
-from app.data_access import load_table  # noqa: E402
+from app.data_access import load_table, get_config  # noqa: E402
 
+config = get_config()
 hero(
-    "FIFA World Cup 2026 \u2014 Analytics & AI Prediction Platform",
+    f"{config.tournament.name} {config.tournament.year} \u2014 Analytics & AI Prediction Platform",
     "150+ years of international football, six machine-learning models, "
     "100,000 Monte Carlo tournament simulations, and explainable AI \u2014 "
-    "predicting the semifinalists, finalists, and champion before the final whistle.",
+    "predicting the semifinalists, finalists, and champion before the final whistle."
+    '<br><br><a href="/Prediction" target="_self" class="cta-button primary">View Predictions</a>'
+    '&nbsp;&nbsp;<a href="/Simulation" target="_self" class="cta-button secondary">Run Simulation</a>',
 )
 
 cleaned = load_table("cleaned_results")

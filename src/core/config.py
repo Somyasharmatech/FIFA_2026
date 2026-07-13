@@ -79,6 +79,14 @@ class ModelSettings:
 
 
 @dataclass(frozen=True)
+class TournamentSettings:
+    """Tournament metadata for dynamic UI."""
+
+    year: int = 2026
+    name: str = "FIFA World Cup"
+
+
+@dataclass(frozen=True)
 class AppConfig:
     """Fully resolved application configuration."""
 
@@ -96,6 +104,7 @@ class AppConfig:
     features: FeatureSettings = field(default_factory=FeatureSettings)
     models: ModelSettings = field(default_factory=ModelSettings)
     simulation: SimulationSettings = field(default_factory=SimulationSettings)
+    tournament: TournamentSettings = field(default_factory=TournamentSettings)
     datasets: dict[str, DatasetConfig] = field(default_factory=dict)
 
     def ensure_directories(self) -> None:
@@ -171,6 +180,7 @@ def load_config(config_path: Path | str = DEFAULT_CONFIG_PATH) -> AppConfig:
         features=FeatureSettings(**raw.get("features", {})),
         models=ModelSettings(**raw.get("models", {})),
         simulation=_simulation_settings(raw.get("simulation", {})),
+        tournament=TournamentSettings(**raw.get("tournament", {})),
         datasets=datasets,
     )
 
