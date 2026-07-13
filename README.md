@@ -2,9 +2,9 @@
 
 > An end-to-end, production-grade football analytics platform that predicts the FIFA World Cup 2026 semifinalists, finalists, and champion using machine learning, Monte Carlo simulation, and explainable AI — delivered through a modern Streamlit dashboard.
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue)
+![Python](https://img.shields.io/badge/Python-3.13-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-Milestone%201-orange)
+![Status](https://img.shields.io/badge/Status-Version%202.5-orange)
 
 ---
 
@@ -16,8 +16,10 @@
 4. **Trains & compares** six ML models (Logistic Regression, Random Forest, Gradient Boosting, XGBoost, LightGBM, CatBoost) and auto-selects the best.
 5. **Simulates** the World Cup 2026 tournament 100,000+ times via Monte Carlo simulation.
 6. **Predicts** semifinal winners, finalists, and the champion — with probabilities, never hardcoded.
-7. **Explains** every prediction using SHAP (Explainable AI).
-8. **Visualizes** everything in a dark-theme, glassmorphism Streamlit dashboard.
+7. **Explains** every prediction using SHAP (Explainable AI) with human-readable narratives.
+8. **Exposes** predictions via a FastAPI REST Layer.
+9. **Visualizes** everything in a dark-theme, glassmorphism Streamlit dashboard with interactive Plotly maps and MLOps tracking.
+10. **Generates** professional PDF analytics reports.
 
 ## 🏗️ Architecture (Summary)
 
@@ -139,21 +141,23 @@ docker run -p 8501:8501 fifa2026-analytics
 pytest tests/ -v
 ```
 
+**2b. Launch the REST API:**
+
+```bash
+uvicorn app.api:app --reload
+```
+
 ## 🛠️ Tech Stack
 
-Python · Pandas · NumPy · Matplotlib · Plotly · Scikit-learn · XGBoost · LightGBM · CatBoost · SHAP · SciPy · Statsmodels · SQLite · Streamlit · Docker
+Python 3.13 · Pandas · Plotly Express · Scikit-learn · XGBoost · LightGBM · CatBoost · SHAP · FastAPI · SQLite · Streamlit · FPDF2 · Docker
 
 ## 🗺️ Roadmap
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
-| M1 | Scaffolding, config, data collection, SQLite | ✅ Done |
-| M2 | Cleaning, EDA, feature engineering | ✅ Done |
-| M3 | ML training, evaluation, model selection | ✅ Done |
-| M4 | Monte Carlo simulation & predictions | ✅ Done |
-| M5 | SHAP explainability | ✅ Done |
-| M6 | Streamlit dashboard & premium UI | ✅ Done |
-| M7 | Docker hardening, docs, screenshots, QA | ⏳ Next |
+| M1-6 | Data Collection, EDA, ML, Monte Carlo, UI Dashboard | ✅ Done |
+| V2.5 | MLOps, REST API, BI Dashboards, PDF Gen, Architecture | ✅ Done |
+| V3.0 | Real-time tournament tracking, Cloud Deployment | ⏳ Next |
 
 ## 📜 Data Sources & Licensing
 
