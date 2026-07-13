@@ -28,3 +28,4 @@ joblib>=1.4.2
 
 # Testing & quality
 pytest>=8.3.3
+

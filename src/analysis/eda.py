@@ -9,9 +9,15 @@ from __future__ import annotations
 
 import logging
 from typing import Any
-
+import numpy as np
 import pandas as pd
 from scipy import stats
+
+import types
+print("=== PANDAS MODULE DEBUG ===")
+print("type(pd):", type(pd))
+print("pd:", pd)
+print("pd.__file__:", pd.__file__ if hasattr(pd, "__file__") else "no file")
 
 logger = logging.getLogger(__name__)
 
