@@ -137,7 +137,7 @@ if st.button("Generate Professional PDF Report", type="primary"):
         # Embed Charts
         pdf.section_title("Visual Analytics & Model Performance")
         
-        figures = Path("reports") / "figures"
+        figures = Path(__file__).resolve().parents[2] / "reports" / "figures"
         champ_chart = figures / "champion_probabilities.png"
         confusion = figures / "confusion_matrix.png"
         roc = figures / "roc_curves.png"

@@ -54,29 +54,29 @@ class MonteCarloSimulator:
             self._ko_probs[pair] = ph_adj / (ph_adj + pa_adj)
 
     def run(self, groups: dict[str, list[str]]) -> SimulationResult:
-        """Simulate the tournament and aggregate stage probabilities.
-
-        Args:
-            groups: Mapping of group name to its list of teams.
-        """
-        teams = [team for members in groups.values() for team in members]
+        """Simulate the remaining tournament from the Semifinals."""
+        teams = ["France", "Spain", "England", "Argentina"]
+        
+        # We only output probabilities for the surviving teams
         semis: dict[str, int] = {team: 0 for team in teams}
         finals: dict[str, int] = {team: 0 for team in teams}
         champions: dict[str, int] = {team: 0 for team in teams}
         history: list[dict[str, object]] = []
 
         for run in range(self._n_runs):
-            qualifiers = self._group_stage(groups)
-            bracket = self._seed_bracket(qualifiers)
-            while len(bracket) > 4:
-                bracket = self._play_round(bracket)
-            for team in bracket:  # semifinalists
+            # Semifinal 1: France vs Spain, Semifinal 2: England vs Argentina
+            bracket = ["France", "Spain", "England", "Argentina"]
+            
+            for team in bracket:  # Semifinalists
                 semis[team] += 1
+            
             finalists = self._play_round(bracket)
             for team in finalists:
                 finals[team] += 1
+                
             champion = self._play_round(finalists)[0]
             champions[champion] += 1
+            
             runner_up = finalists[0] if finalists[1] == champion else finalists[1]
             history.append({"run": run, "champion": champion, "runner_up": runner_up})
 
@@ -92,7 +92,7 @@ class MonteCarloSimulator:
             .sort_values("champion_prob", ascending=False)
             .reset_index(drop=True)
         )
-        logger.info("Completed %d simulations", self._n_runs)
+        logger.info("Completed %d simulations from Semifinals", self._n_runs)
         return SimulationResult(
             probabilities=probabilities,
             history=pd.DataFrame(history),
