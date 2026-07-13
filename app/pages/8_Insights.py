@@ -65,6 +65,14 @@ st.markdown(
 )
 
 section("Home advantage is real")
+print("=== DEBUG BEFORE home_advantage_test ===")
+print("type(cleaned):", type(cleaned))
+print("repr(cleaned):", repr(cleaned.head(2)) if isinstance(cleaned, pd.DataFrame) else repr(cleaned))
+print("isinstance(cleaned, pd.DataFrame):", isinstance(cleaned, pd.DataFrame))
+if isinstance(cleaned, pd.DataFrame):
+    print("len(cleaned):", len(cleaned))
+    print("cleaned.columns:", cleaned.columns.tolist())
+
 test = home_advantage_test(cleaned)
 significant = (
     "statistically significant" if test["p_value"] < 0.05 else "not significant"
