@@ -34,42 +34,53 @@ hero(
 cleaned = load_table("cleaned_results")
 features = load_table("match_features")
 elo = load_table("elo_ratings")
+sims = load_table("simulation_probabilities")
+
 if cleaned is None or features is None or elo is None:
     missing_data_warning("python scripts/build_features.py")
     st.stop()
 
+# Default to the top surviving team
+default_team = "Argentina"
+if sims is not None and not sims.empty:
+    default_team = sims.iloc[0]["team"]
+
 teams = sorted(elo["team"].tolist())
 team = st.selectbox(
-    "Country", teams, index=teams.index("Argentina") if "Argentina" in teams else 0
+    "Country", teams, index=teams.index(default_team) if default_team in teams else 0
 )
 
 config = get_config()
-state = TeamStateBuilder(config.features.form_window).build_states(cleaned, elo)[team]
+states = TeamStateBuilder(config.features.form_window).build_states(cleaned, elo)
+state = states[team]
 record = team_record(cleaned, team)
 
+# Calculate percentiles
+elo_rank = elo["elo"].rank(pct=True).loc[elo["team"] == team].values[0]
+attack_rank = pd.Series([s.attack_strength for s in states.values()]).rank(pct=True).values[teams.index(team)]
+defense_rank = pd.Series([s.defense_strength for s in states.values()]).rank(pct=True).values[teams.index(team)]
+
 section(f"{team} \u2014 headline numbers")
+
+avg_goals = record["goals_for"] / max(record["played"], 1)
+
 metric_row(
     [
         ("Win %", f"{record['win_pct']:.1f}%", f"{record['played']} matches"),
-        (
-            "Goals for",
-            str(record["goals_for"]),
-            f"{state.form_goals_for:.2f}/game recently",
-        ),
-        (
-            "Goals against",
-            str(record["goals_against"]),
-            f"{state.form_goals_against:.2f}/game recently",
-        ),
-        ("Elo rating", f"{state.elo:.0f}", ""),
-        ("Attack strength", f"{state.attack_strength:.2f}", "vs global avg 1.00"),
-        (
-            "Clean sheet rate",
-            f"{state.clean_sheet_rate:.0%}",
-            f"last {config.features.form_window}",
-        ),
+        ("Average Goals", f"{avg_goals:.2f}", "all-time goals/game"),
+        ("Recent Form", f"{state.form_win_rate:.1%}", f"last {config.features.form_window} matches"),
     ]
 )
+
+metric_row(
+    [
+        ("Elo rating", f"{state.elo:.0f}", f"Top {100 - elo_rank*100:.1f}% globally"),
+        ("Attack strength", f"{state.attack_strength:.2f}", f"Top {100 - attack_rank*100:.1f}% globally"),
+        ("Defense strength", f"{state.defense_strength:.2f}", f"Top {100 - defense_rank*100:.1f}% globally"),
+    ]
+)
+
+st.info("Note: Possession %, Expected Goals (xG), and Shots are excluded from this dashboard as they are not present in the 150-year historical dataset. Only empirically supported metrics are displayed.")
 
 section("Elo trajectory")
 home_elo = features[features["home_team"] == team][["date", "home_elo_pre"]].rename(

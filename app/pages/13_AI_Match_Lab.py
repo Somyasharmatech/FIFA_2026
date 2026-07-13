@@ -29,11 +29,13 @@ engine = get_prediction_engine()
 loaded = load_model()
 features = load_table("match_features")
 
-if engine is None or loaded is None or features is None:
+sims = load_table("simulation_probabilities")
+
+if engine is None or loaded is None or features is None or sims is None:
     missing_data_warning("python scripts/train_models.py")
     st.stop()
 
-teams = sorted(list(engine._states.keys()))
+teams = sorted(sims["team"].tolist())
 
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
@@ -99,23 +101,24 @@ if st.button("Simulate Match", type="primary"):
             0.0, 1.2 + (away_attack - home_defense) * 1.2 + (away_elo - home_elo) / 500
         )
 
-        # Expected Possession heuristic
-        poss_home = max(20, min(80, 50 + (home_elo - away_elo) / 40))
-
         metric_row(
             [
-                (f"{home} Win", f"{p_home:.1%}", f"xG: {xg_home:.1f}"),
-                ("Draw", f"{p_draw:.1%}", ""),
-                (f"{away} Win", f"{p_away:.1%}", f"xG: {xg_away:.1f}"),
-                ("Expected Possession", f"{poss_home:.1f}%", f"{home}"),
+                (f"{home} Win Prob", f"{p_home:.1%}", ""),
+                ("Draw Prob", f"{p_draw:.1%}", ""),
+                (f"{away} Win Prob", f"{p_away:.1%}", ""),
+            ]
+        )
+
+        confidence = max(p_home, p_away) / max(min(p_home, p_away), 0.001)
+        metric_row(
+            [
+                ("Expected Score", f"{xg_home:.1f} - {xg_away:.1f}", ""),
+                ("Likely Scoreline", f"{int(round(xg_home))} - {int(round(xg_away))}", ""),
+                ("Confidence", f"{confidence:.2f}x", "Lead over opponent"),
             ]
         )
 
         section("AI Explanation & Confidence")
-        confidence = max(p_home, p_away) / max(min(p_home, p_away), 0.001)
-        st.info(
-            f"**Confidence Score:** {confidence:.2f}x (Higher means the AI is more certain of the favorite)"
-        )
 
         frame = features.copy()
         frame["neutral"] = frame["neutral"].astype(int)
@@ -124,22 +127,31 @@ if st.button("Simulate Match", type="primary"):
         vector = engine.feature_vector(home, away, overrides)
         predicted_class = int(np.argmax([p_away, p_draw, p_home]))
         contributions = explainer.explain_prediction(vector, predicted_class)
+        
+        top = contributions.head(8)
+        deciding_factors = "<br>".join([f"✓ {row['feature'].replace('_', ' ').title()}" for _, row in top.head(4).iterrows()])
 
         st.markdown(
-            f'<div class="glass-card">💡 <b>Why:</b> '
-            f"{generate_match_narrative(home, away, (p_home, p_draw, p_away), contributions)}</div>",
+            f"""
+            <div class="glass-card">
+                <h4 style="margin-top: 0;">Match Explanation</h4>
+                <p>💡 <b>Narrative:</b> {generate_match_narrative(home, away, (p_home, p_draw, p_away), contributions)}</p>
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 1rem 0;">
+                <p><b>Key Deciding Factors:</b></p>
+                <div style="color: #00c896; font-weight: bold;">{deciding_factors}</div>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
 
         left, right = st.columns(2)
-        top = contributions.head(8)
-
+        
         left.plotly_chart(
             charts.bar_chart(
                 top,
                 "feature",
                 "contribution",
-                "SHAP Contributions to Predicted Outcome",
+                "Feature Importance (SHAP Contributions)",
                 horizontal=True,
                 color="#7c4dff",
             ),
@@ -153,6 +165,6 @@ if st.button("Simulate Match", type="primary"):
             away: [away_elo / 2500, away_form, away_attack / 3.0, away_defense / 3.0],
         }
         right.plotly_chart(
-            charts.radar_compare(categories, series, "Team Attribute Radar"),
+            charts.radar_compare(categories, series, "Team Attribute Radar Comparison"),
             width="stretch",
         )

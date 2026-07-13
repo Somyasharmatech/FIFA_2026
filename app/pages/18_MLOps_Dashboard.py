@@ -96,7 +96,7 @@ st.code(", ".join(metadata["feature_names"]))
 
 section("Calibration Impact")
 calibrated_models = leaderboard[leaderboard["calibrated"]]
-uncalibrated_models = leaderboard[not leaderboard["calibrated"]]
+uncalibrated_models = leaderboard[leaderboard["calibrated"] == False]
 
 st.markdown(
     f"""

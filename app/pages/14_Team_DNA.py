@@ -28,11 +28,13 @@ cleaned = load_table("cleaned_results")
 goalscorers = load_table("raw_goalscorers")
 shootouts = load_table("raw_shootouts")
 
-if engine is None or cleaned is None:
+sims = load_table("simulation_probabilities")
+
+if engine is None or cleaned is None or sims is None:
     missing_data_warning("python scripts/train_models.py")
     st.stop()
 
-teams = sorted(list(engine._states.keys()))
+teams = sorted(sims["team"].tolist())
 
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 selected_team = st.selectbox(
@@ -98,10 +100,66 @@ set_piece_eff = "N/A"
 if goalscorers is not None:
     team_goals = goalscorers[goalscorers["team"] == selected_team]
     if len(team_goals) > 0:
-        penalties = team_goals[team_goals["penalty"]]
+        penalties = team_goals[team_goals["penalty"] == 1]
         set_piece_eff = f"{len(penalties) / len(team_goals):.1%} of goals are penalties"
 
-section("The DNA Profile")
+# Find most similar team
+min_dist = float('inf')
+most_similar = None
+for t, s in engine._states.items():
+    if t == selected_team:
+        continue
+    dist = ((state.attack_strength - s.attack_strength) ** 2 + 
+            (state.defense_strength - s.defense_strength) ** 2 + 
+            ((state.elo - s.elo) / 1000) ** 2)
+    if dist < min_dist:
+        min_dist = dist
+        most_similar = t
+
+section("AI Summary & DNA Profile")
+
+# AI Dynamic Summary
+strengths = []
+weaknesses = []
+if state.attack_strength > 1.2: strengths.append("Potent Attack (high goal frequency)")
+else: weaknesses.append("Lacks cutting edge in attack")
+
+if state.defense_strength > 1.2: strengths.append("Resilient Defense (high clean sheet rate)")
+else: weaknesses.append("Vulnerable defense against top opposition")
+
+if state.form_win_rate > 0.6: strengths.append("Excellent recent momentum")
+else: weaknesses.append("Poor recent form entering the tournament")
+
+if consistency_score > 0.7: strengths.append("Highly consistent tournament performer")
+else: weaknesses.append("Historically inconsistent under pressure")
+
+st.markdown(
+    f"""
+    <div class="glass-card" style="margin-bottom: 2rem;">
+        <h4>🧠 AI Generated Scouting Report</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+            <div>
+                <b style="color: #00c896;">💪 Core Strengths</b>
+                <ul style="color: #e2e8f0;">
+                    {"".join(f"<li>{s}</li>" for s in strengths) if strengths else "<li>Balanced profile, no extreme strengths</li>"}
+                </ul>
+            </div>
+            <div>
+                <b style="color: #ff4d4d;">⚠️ Key Weaknesses</b>
+                <ul style="color: #e2e8f0;">
+                    {"".join(f"<li>{w}</li>" for w in weaknesses) if weaknesses else "<li>Few glaring weaknesses</li>"}
+                </ul>
+            </div>
+        </div>
+        <hr style="border-color: rgba(255,255,255,0.1); margin: 1rem 0;">
+        <p><b>Playing Style:</b> {tactical_style} with a {passing_profile} approach. 
+        <b>Most Similar Team Historically:</b> {most_similar}.</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
 c1, c2, c3, c4 = st.columns(4)
 c1.markdown(
     f'<div class="glass-card"><div class="metric-label">Tactical Style</div><div class="metric-value" style="font-size:1.2rem;">{tactical_style}</div></div>',

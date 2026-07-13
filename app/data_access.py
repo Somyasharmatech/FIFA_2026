@@ -36,18 +36,27 @@ def get_db() -> SQLiteClient:
 
 
 @st.cache_data(ttl=600)
-def load_table(name: str) -> pd.DataFrame | None:
-    """Load a SQLite table, or ``None`` when the pipeline hasn't produced it."""
+def _cached_load_table(name: str) -> pd.DataFrame:
     db = get_db()
-    if name not in db.list_tables():
-        return None
     frame = db.read_table(name)
     if "date" in frame.columns:
         frame["date"] = pd.to_datetime(frame["date"])
     return frame
 
 
+def load_table(name: str) -> pd.DataFrame | None:
+    """Load a SQLite table, or ``None`` when the pipeline hasn't produced it."""
+    db = get_db()
+    if name not in db.list_tables():
+        return None
+    return _cached_load_table(name)
+
+
 @st.cache_resource
+def _cached_load_model(model_path: Path, meta_path: Path) -> tuple[Any, dict[str, Any]]:
+    return joblib.load(model_path), json.loads(meta_path.read_text(encoding="utf-8"))
+
+
 def load_model() -> tuple[Any, dict[str, Any]] | None:
     """Champion model and its metadata, or ``None`` if not trained yet."""
     models_dir = ROOT / get_config().models_dir
@@ -55,7 +64,7 @@ def load_model() -> tuple[Any, dict[str, Any]] | None:
     meta_path = models_dir / "best_model_metadata.json"
     if not model_path.exists() or not meta_path.exists():
         return None
-    return joblib.load(model_path), json.loads(meta_path.read_text(encoding="utf-8"))
+    return _cached_load_model(model_path, meta_path)
 
 
 @st.cache_resource
