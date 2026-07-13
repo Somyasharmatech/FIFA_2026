@@ -12,14 +12,15 @@ htmlcov/
 # Environment
 .env
 
-# Data & artifacts (regenerated, never committed)
-data/raw/*
-data/processed/*
-database/*.db
-database/*.sqlite3
-models/*.pkl
-models/*.joblib
-models/*.cbm
+# Data & artifacts (required by Streamlit at runtime)
+# data/raw/*
+# data/processed/*
+# database/*.db
+# database/*.sqlite3
+# models/*.pkl
+# models/*.joblib
+# models/*.json
+# models/*.cbm
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !database/.gitkeep
