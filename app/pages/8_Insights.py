@@ -52,7 +52,7 @@ if shap_importance is not None:
         charts.bar_chart(shap_importance, "feature", "importance",
                          "Global feature importance (mean |SHAP|)", horizontal=True,
                          color="#7c4dff"),
-        use_container_width=True,
+        width='stretch',
     )
 else:
     st.caption("Run `python scripts/explain_model.py` to add SHAP-based insights.")
@@ -67,7 +67,7 @@ draw_rate = (
 )
 st.plotly_chart(charts.line_chart(draw_rate, "decade", "draw_pct",
                                   "Share of matches ending in a draw by decade (%)"),
-                use_container_width=True)
+                width='stretch')
 
 section("Sustained excellence")
 teams = team_performance_summary(cleaned)
@@ -75,4 +75,4 @@ elite = teams[teams["matches_played"] >= 300].head(10)
 st.plotly_chart(charts.bar_chart(elite, "team", "win_pct",
                                  "Highest win % among nations with 300+ matches",
                                  horizontal=True),
-                use_container_width=True)
+                width='stretch')

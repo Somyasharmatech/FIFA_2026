@@ -40,7 +40,7 @@ metric_row([
 
 section("Leaderboard")
 display = leaderboard.drop(columns=["best_params"], errors="ignore").round(4)
-st.dataframe(display, use_container_width=True)
+st.dataframe(display, width='stretch')
 
 melted = leaderboard.melt(
     id_vars="model",
@@ -51,7 +51,7 @@ import plotly.express as px  # noqa: E402
 
 fig = px.bar(melted, x="model", y="score", color="metric", barmode="group",
              color_discrete_sequence=charts.PALETTE)
-st.plotly_chart(charts._style(fig, "All models \u00d7 all metrics"), use_container_width=True)
+st.plotly_chart(charts._style(fig, "All models \u00d7 all metrics"), width='stretch')
 
 section("Evaluation charts")
 figures = Path("reports") / "figures"

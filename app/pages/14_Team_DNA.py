@@ -113,7 +113,7 @@ for year, group in team_matches.groupby("year"):
     
 df_goals = pd.DataFrame(goals_timeline)
 if not df_goals.empty:
-    st.plotly_chart(charts.line_chart(df_goals, "year", "Goals For", "Goals Scored Over Time"), use_container_width=True)
+    st.plotly_chart(charts.line_chart(df_goals, "year", "Goals For", "Goals Scored Over Time"), width='stretch')
 
 section("Radar Profile (vs Global Average)")
 avg_attack = np.mean([s.attack_strength for s in engine._states.values()])
@@ -126,4 +126,4 @@ series = {
     selected_team: [state.elo/2500, state.form_win_rate, state.attack_strength/3.0, state.defense_strength/3.0],
     "Global Average": [avg_elo/2500, avg_form, avg_attack/3.0, avg_defense/3.0],
 }
-st.plotly_chart(charts.radar_compare(categories, series, "Team Attribute Radar"), use_container_width=True)
+st.plotly_chart(charts.radar_compare(categories, series, "Team Attribute Radar"), width='stretch')

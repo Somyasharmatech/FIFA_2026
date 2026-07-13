@@ -55,7 +55,7 @@ st.dataframe(
         "Brier Score": "{:.3f}",
         "CV Score": "{:.3f}",
     }).background_gradient(cmap="viridis", subset=["ROC AUC (OvR)", "Accuracy"]),
-    use_container_width=True
+    width='stretch'
 )
 
 st.caption("Note: Calibration (Platt Scaling) is only applied if it strictly improves both Log Loss and Brier Score over the raw estimator.")

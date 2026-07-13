@@ -33,7 +33,7 @@ timeline["date"] = pd.to_datetime(timeline["date"])
 
 st.plotly_chart(
     charts.line_chart(timeline, "date", "champion_prob", "Win Probability Over Time"),
-    use_container_width=True
+    width='stretch'
 )
 
 st.markdown("""

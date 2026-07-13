@@ -34,7 +34,7 @@ goals_per_decade = cleaned.groupby("decade").apply(
 
 st.plotly_chart(
     charts.bar_chart(goals_per_decade, "decade", "Goals per Match", "Average Goals per Match by Decade"),
-    use_container_width=True
+    width='stretch'
 )
 st.caption("Notice the historical peak in the 1920s-1950s, followed by the modern stabilization of defensive tactics.")
 
@@ -49,7 +49,7 @@ home_adv_per_decade = cleaned[cleaned["neutral"] == False].groupby("decade").app
 
 st.plotly_chart(
     charts.line_chart(home_adv_per_decade, "decade", "Advantage Margin (%)", "Home Win Margin minus Away Win Margin (Non-Neutral Matches)"),
-    use_container_width=True
+    width='stretch'
 )
 st.caption("Home advantage has steadily declined globally due to standardized pitch sizes, VAR, globalization of tactics, and better travel conditions.")
 
@@ -77,7 +77,7 @@ total_stats = total_stats.sort_values("Win Rate (%)", ascending=False).head(15)
 
 st.plotly_chart(
     charts.bar_chart(total_stats, "Win Rate (%)", "home_team", "All-Time Win Rate (Min. 200 Matches)", horizontal=True),
-    use_container_width=True
+    width='stretch'
 )
 
 # 4. Tournament Types Breakdown
@@ -89,5 +89,5 @@ tournament_counts = tournament_counts.groupby("Tournament", as_index=False).sum(
 
 st.plotly_chart(
     charts.pie_chart(tournament_counts, "Tournament", "Matches", "Distribution of International Matches"),
-    use_container_width=True
+    width='stretch'
 )

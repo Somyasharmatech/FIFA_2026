@@ -52,7 +52,7 @@ metric_row([
 st.plotly_chart(
     charts.bar_chart(sims.head(10), "team", "champion_prob",
                      "Champion probability \u2014 top 10", horizontal=True),
-    use_container_width=True,
+    width='stretch',
 )
 
 section("Explainable match predictor")
@@ -96,5 +96,5 @@ if home != away and st.button("Predict match", type="primary"):
         charts.bar_chart(top, "feature", "contribution",
                          "SHAP contributions to the predicted outcome", horizontal=True,
                          color="#7c4dff"),
-        use_container_width=True,
+        width='stretch',
     )

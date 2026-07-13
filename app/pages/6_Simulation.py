@@ -36,14 +36,14 @@ top = sims.head(12)
 st.plotly_chart(
     charts.grouped_bars(top, "team", ["semifinal_prob", "final_prob", "champion_prob"],
                         "Semifinal / Final / Champion probability \u2014 top 12"),
-    use_container_width=True,
+    width='stretch',
 )
 
 section("Champion probability distribution")
 st.plotly_chart(
     charts.histogram(sims[sims["champion_prob"] > 0], "champion_prob",
                      "Distribution of champion probability across teams"),
-    use_container_width=True,
+    width='stretch',
 )
 
 section("Simulation history")
@@ -54,7 +54,7 @@ if history is not None:
     st.plotly_chart(
         charts.pie_chart(champion_counts.head(8), "team", "titles",
                          "Share of simulated titles \u2014 top 8"),
-        use_container_width=True,
+        width='stretch',
     )
 else:
     st.caption("Run history is exported to reports/simulation_history.csv by the CLI.")
@@ -66,4 +66,4 @@ st.download_button(
     file_name="wc2026_simulation_probabilities.csv",
     mime="text/csv",
 )
-st.dataframe(sims.round(4), use_container_width=True, height=420)
+st.dataframe(sims.round(4), width='stretch', height=420)

@@ -59,7 +59,7 @@ categories = ["Elo", "Form", "Attack", "Defense", "Clean sheets", "Scoring"]
 st.plotly_chart(
     charts.radar_compare(categories, {team_a: _axes(state_a), team_b: _axes(state_b)},
                          f"{team_a} vs {team_b} \u2014 current profile"),
-    use_container_width=True,
+    width='stretch',
 )
 
 section("All-time records")
@@ -99,8 +99,8 @@ else:
                         "count": [int(wins_a), int(draws), int(wins_b)]})
     left, right = st.columns([1, 2])
     left.plotly_chart(charts.pie_chart(h2h, "result", "count",
-                                       f"{len(meetings)} meetings"), use_container_width=True)
+                                       f"{len(meetings)} meetings"), width='stretch')
     right.dataframe(
         meetings[["date", "home_team", "home_score", "away_score", "away_team", "tournament"]]
-        .head(15), use_container_width=True, height=420,
+        .head(15), width='stretch', height=420,
     )

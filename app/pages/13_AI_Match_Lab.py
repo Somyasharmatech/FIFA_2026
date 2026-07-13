@@ -113,7 +113,7 @@ if st.button("Simulate Match", type="primary"):
             charts.bar_chart(top, "feature", "contribution",
                              "SHAP Contributions to Predicted Outcome", horizontal=True,
                              color="#7c4dff"),
-            use_container_width=True,
+            width='stretch',
         )
         
         # Radar compare
@@ -122,4 +122,4 @@ if st.button("Simulate Match", type="primary"):
             home: [home_elo/2500, home_form, home_attack/3.0, home_defense/3.0],
             away: [away_elo/2500, away_form, away_attack/3.0, away_defense/3.0],
         }
-        right.plotly_chart(charts.radar_compare(categories, series, "Team Attribute Radar"), use_container_width=True)
+        right.plotly_chart(charts.radar_compare(categories, series, "Team Attribute Radar"), width='stretch')

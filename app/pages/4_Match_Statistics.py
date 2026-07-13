@@ -53,14 +53,14 @@ away_elo = features[features["away_team"] == team][["date", "away_elo_pre"]].ren
     columns={"away_elo_pre": "elo"})
 trajectory = pd.concat([home_elo, away_elo]).sort_values("date")
 st.plotly_chart(charts.line_chart(trajectory, "date", "elo", f"{team} Elo rating over time"),
-                use_container_width=True)
+                width='stretch')
 
 section("Recent matches")
 recent = cleaned[(cleaned["home_team"] == team) | (cleaned["away_team"] == team)].sort_values(
     "date", ascending=False)
 st.dataframe(
     recent[["date", "home_team", "home_score", "away_score", "away_team", "tournament"]].head(15),
-    use_container_width=True, height=380,
+    width='stretch', height=380,
 )
 
 section("Feature correlation matrix")
@@ -68,4 +68,4 @@ st.caption("Relationships between the engineered features that drive the model."
 corr = feature_correlations(
     features, ["elo_diff", "form_diff", "attack_diff", "defense_diff", "h2h_balance"])
 st.plotly_chart(charts.correlation_heatmap(corr, "Feature correlations"),
-                use_container_width=True)
+                width='stretch')

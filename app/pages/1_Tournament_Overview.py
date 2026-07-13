@@ -50,4 +50,4 @@ section("Participants by Elo strength")
 participants = [team for members in groups.values() for team in members]
 strength = elo[elo["team"].isin(participants)].sort_values("elo", ascending=False)
 st.plotly_chart(charts.treemap(strength, "team", "elo", "Elo landscape of the 48 participants"),
-                use_container_width=True)
+                width='stretch')

@@ -10,6 +10,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import warnings
+
+warnings.filterwarnings("ignore", message=".*locationmode.*")
 
 from app.ui import hero, missing_data_warning, section, setup_page
 
@@ -98,6 +101,6 @@ fig.update_layout(
     font=dict(color="#e8eaf0", family="sans-serif"),
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width='stretch')
 
 st.info("**Note on UK Nations:** In FIFA, England, Scotland, Wales, and Northern Ireland compete separately. Standard geographical maps aggregate them under the United Kingdom, so they may not render distinct borders here.")
