@@ -86,7 +86,24 @@ def home_advantage_test(matches: pd.DataFrame) -> dict[str, Any]:
     Returns:
         Dict with group means, t-statistic, p-value, and sample size.
     """
-    non_neutral = matches[matches["neutral"] == 0]
+    frame = matches.copy()
+    
+    # 6. If duplicate columns exist, remove or rename them before filtering
+    # 5. Ensure matches["neutral"] always returns a pandas Series.
+    neutral_col = frame["neutral"]
+    if isinstance(neutral_col, pd.DataFrame):
+        neutral_col = neutral_col.iloc[:, 0]
+    
+    # 4. Convert all supported neutral formats safely
+    if pd.api.types.is_object_dtype(neutral_col) or pd.api.types.is_string_dtype(neutral_col):
+        # Convert "TRUE"/"FALSE" to bool then to int
+        if neutral_col.astype(str).str.upper().isin(["TRUE", "FALSE"]).any():
+            neutral_col = neutral_col.astype(str).str.upper() == "TRUE"
+    
+    # Convert bools or 0/1 to integer safely
+    frame["neutral_clean"] = neutral_col.astype(int)
+    
+    non_neutral = frame[frame["neutral_clean"] == 0]
     t_stat, p_value = stats.ttest_ind(
         non_neutral["home_score"], non_neutral["away_score"], equal_var=False
     )
