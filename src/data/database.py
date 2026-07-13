@@ -43,6 +43,13 @@ class SQLiteClient:
         """
         with self.connection() as conn:
             frame.to_sql(table, conn, if_exists="replace", index=False)
+            # Create indices for common access patterns
+            if "date" in frame.columns:
+                conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_date ON {table}(date)")
+            if "home_team" in frame.columns and "away_team" in frame.columns:
+                conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_teams ON {table}(home_team, away_team)")
+            if "team" in frame.columns:
+                conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_team ON {table}(team)")
         logger.info("Ingested %d rows into table '%s'", len(frame), table)
         return len(frame)
 

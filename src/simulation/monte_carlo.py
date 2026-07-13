@@ -36,9 +36,20 @@ class MonteCarloSimulator:
     def __init__(self, pair_probs: PairProbs, n_runs: int = 100_000, seed: int = 42) -> None:
         if n_runs < 1:
             raise ValueError("n_runs must be positive")
-        self._probs = pair_probs
         self._n_runs = n_runs
         self._rng = np.random.default_rng(seed)
+        
+        # Precompute normalized cumulative probabilities for speed
+        self._group_probs = {}
+        self._ko_probs = {}
+        for pair, (ph, pd, pa) in pair_probs.items():
+            tot = ph + pd + pa
+            self._group_probs[pair] = (ph / tot, (ph + pd) / tot)
+            
+            win_mass = max(ph + pa, 1e-9)
+            ph_adj = ph + pd * (ph / win_mass)
+            pa_adj = pa + pd * (pa / win_mass)
+            self._ko_probs[pair] = ph_adj / (ph_adj + pa_adj)
 
     def run(self, groups: dict[str, list[str]]) -> SimulationResult:
         """Simulate the tournament and aggregate stage probabilities.
@@ -141,23 +152,16 @@ class MonteCarloSimulator:
         ]
 
     def _sample_match(self, home: str, away: str) -> str:
-        """Sample a group-stage result: 'home', 'draw', or 'away'."""
-        p_home, p_draw, p_away = self._probs[(home, away)]
-        return str(self._rng.choice(["home", "draw", "away"], p=_norm(p_home, p_draw, p_away)))
+        """Sample a group-stage result using precomputed cumulative thresholds."""
+        r = self._rng.random()
+        p_home, p_home_draw = self._group_probs[(home, away)]
+        if r < p_home: return "home"
+        if r < p_home_draw: return "draw"
+        return "away"
 
     def _knockout_winner(self, home: str, away: str) -> str:
-        """Knockout tie: draws go to 'extra time' — draw probability is
-        redistributed proportionally to each side's win probability."""
-        p_home, p_draw, p_away = self._probs[(home, away)]
-        win_mass = max(p_home + p_away, 1e-9)
-        p_home_adj = p_home + p_draw * (p_home / win_mass)
-        total = p_home_adj + (p_away + p_draw * (p_away / win_mass))
-        return home if self._rng.random() < p_home_adj / total else away
-
-
-def _norm(*values: float) -> list[float]:
-    total = sum(values)
-    return [value / total for value in values]
+        """Knockout tie using precomputed adjusted win probability."""
+        return home if self._rng.random() < self._ko_probs[(home, away)] else away
 
 
 def _next_power_of_two(n: int) -> int:
