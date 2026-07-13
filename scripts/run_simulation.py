@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import logging
 import sys
@@ -90,6 +91,12 @@ def main() -> int:
     result.probabilities.to_csv(REPORTS_DIR / "simulation_probabilities.csv", index=False)
     result.history.to_csv(REPORTS_DIR / "simulation_history.csv", index=False)
     db.ingest_dataframe(result.probabilities, "simulation_probabilities")
+    
+    # Log timeline snapshot for V2.5
+    timeline = result.probabilities.head(10)[["team", "champion_prob"]].copy()
+    timeline["date"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    db.append_to_table(timeline, "prediction_timeline")
+    
     _plot_champions(result.probabilities.head(12), n_runs)
 
     # Prediction summary (fully derived from simulation output).

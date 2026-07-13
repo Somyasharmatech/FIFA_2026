@@ -46,6 +46,17 @@ class SQLiteClient:
         logger.info("Ingested %d rows into table '%s'", len(frame), table)
         return len(frame)
 
+    def append_to_table(self, frame: pd.DataFrame, table: str) -> int:
+        """Append the contents of ``frame`` to ``table``.
+        
+        Returns:
+            Number of rows appended.
+        """
+        with self.connection() as conn:
+            frame.to_sql(table, conn, if_exists="append", index=False)
+        logger.info("Appended %d rows to table '%s'", len(frame), table)
+        return len(frame)
+
     def read_table(self, table: str) -> pd.DataFrame:
         """Return an entire table as a DataFrame."""
         with self.connection() as conn:
