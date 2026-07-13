@@ -54,18 +54,20 @@ class MonteCarloSimulator:
             self._ko_probs[pair] = ph_adj / (ph_adj + pa_adj)
 
     def run(self, groups: dict[str, list[str]]) -> SimulationResult:
-        """Simulate the remaining tournament from the Semifinals."""
-        teams = ["France", "Spain", "England", "Argentina"]
+        """Simulate the full tournament from the group stage."""
+        teams = [team for members in groups.values() for team in members]
         
-        # We only output probabilities for the surviving teams
         semis: dict[str, int] = {team: 0 for team in teams}
         finals: dict[str, int] = {team: 0 for team in teams}
         champions: dict[str, int] = {team: 0 for team in teams}
         history: list[dict[str, object]] = []
 
         for run in range(self._n_runs):
-            # Semifinal 1: France vs Spain, Semifinal 2: England vs Argentina
-            bracket = ["France", "Spain", "England", "Argentina"]
+            qualifiers = self._group_stage(groups)
+            bracket = self._seed_bracket(qualifiers)
+            
+            while len(bracket) > 4:
+                bracket = self._play_round(bracket)
             
             for team in bracket:  # Semifinalists
                 semis[team] += 1
