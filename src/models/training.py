@@ -26,6 +26,7 @@ from lightgbm import LGBMClassifier
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -156,20 +157,46 @@ class ModelTrainer:
             )
             search.fit(dataset.x_train, dataset.y_train)
             model = search.best_estimator_
+
+            y_pred_uncal = model.predict(dataset.x_test).ravel()
+            y_proba_uncal = model.predict_proba(dataset.x_test)
+            metrics_uncal = compute_metrics(dataset.y_test, y_pred_uncal, y_proba_uncal)
+
+            # Conditional Calibration
+            try:
+                calibrated_model = CalibratedClassifierCV(estimator=model, method="sigmoid", cv=3)
+                calibrated_model.fit(dataset.x_train, dataset.y_train)
+                y_pred_cal = calibrated_model.predict(dataset.x_test).ravel()
+                y_proba_cal = calibrated_model.predict_proba(dataset.x_test)
+                metrics_cal = compute_metrics(dataset.y_test, y_pred_cal, y_proba_cal)
+
+                # Use calibration only if it improves both log loss and brier score
+                if metrics_cal["log_loss"] < metrics_uncal["log_loss"] and metrics_cal["brier_score"] < metrics_uncal["brier_score"]:
+                    logger.info("%s -> Calibration IMPROVED performance. Using calibrated model.", name)
+                    model = calibrated_model
+                    metrics = metrics_cal
+                    used_cal = True
+                else:
+                    logger.info("%s -> Calibration DID NOT improve performance. Using uncalibrated.", name)
+                    metrics = metrics_uncal
+                    used_cal = False
+            except Exception as e:
+                logger.warning("%s -> Calibration failed: %s. Using uncalibrated.", name, e)
+                metrics = metrics_uncal
+                used_cal = False
+
             fitted[name] = model
 
-            y_pred = model.predict(dataset.x_test).ravel()
-            y_proba = model.predict_proba(dataset.x_test)
-            metrics = compute_metrics(dataset.y_test, y_pred, y_proba)
             rows.append(
                 {
                     "model": name,
                     "cv_best_score": float(search.best_score_),
                     **metrics,
+                    "calibrated": used_cal,
                     "best_params": json.dumps(search.best_params_),
                 }
             )
-            logger.info("%s -> %s", name, {k: round(v, 4) for k, v in metrics.items()})
+            logger.info("%s metrics: %s", name, {k: round(v, 4) for k, v in metrics.items()})
 
         leaderboard = (
             pd.DataFrame(rows)

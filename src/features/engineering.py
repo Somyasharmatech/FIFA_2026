@@ -56,10 +56,10 @@ class MatchFeatureBuilder:
         )
         features["form_diff"] = features["home_form_win_rate"] - features["away_form_win_rate"]
         features["attack_diff"] = (
-            features["home_attack_strength"] - features["away_attack_strength"]
+            features["home_attack_strength_index"] - features["away_attack_strength_index"]
         )
         features["defense_diff"] = (
-            features["home_defense_strength"] - features["away_defense_strength"]
+            features["home_defense_strength_index"] - features["away_defense_strength_index"]
         )
 
         columns = [
@@ -70,8 +70,11 @@ class MatchFeatureBuilder:
             "home_form_goals_for", "away_form_goals_for",
             "home_form_goals_against", "away_form_goals_against",
             "home_clean_sheet_rate", "away_clean_sheet_rate",
-            "home_attack_strength", "away_attack_strength", "attack_diff",
-            "home_defense_strength", "away_defense_strength", "defense_diff",
+            "home_form_score", "away_form_score",
+            "home_momentum_score", "away_momentum_score",
+            "home_attack_strength_index", "away_attack_strength_index", "attack_diff",
+            "home_defense_strength_index", "away_defense_strength_index", "defense_diff",
+            "home_team_strength_index", "away_team_strength_index",
             "h2h_balance", "outcome",
         ]
         result = features[columns].copy()
@@ -90,6 +93,7 @@ class MatchFeatureBuilder:
                 "goals_for": frame["home_score"],
                 "goals_against": frame["away_score"],
                 "win": (frame["outcome"] == "home_win").astype(float),
+                "draw": (frame["outcome"] == "draw").astype(float),
             }
         )
         away = pd.DataFrame(
@@ -99,10 +103,12 @@ class MatchFeatureBuilder:
                 "goals_for": frame["away_score"],
                 "goals_against": frame["home_score"],
                 "win": (frame["outcome"] == "away_win").astype(float),
+                "draw": (frame["outcome"] == "draw").astype(float),
             }
         )
         long = pd.concat([home, away]).sort_values("match_id")
         long["clean_sheet"] = (long["goals_against"] == 0).astype(float)
+        long["points"] = long["win"] * 3.0 + long["draw"] * 1.0
 
         grouped = long.groupby("team")
         window = self._window
@@ -114,13 +120,16 @@ class MatchFeatureBuilder:
                 "form_goals_for": _shifted_rolling_mean(grouped["goals_for"], window),
                 "form_goals_against": _shifted_rolling_mean(grouped["goals_against"], window),
                 "clean_sheet_rate": _shifted_rolling_mean(grouped["clean_sheet"], window),
+                "form_score": _shifted_rolling_mean(grouped["points"], window) / 3.0,
+                "momentum_score": _shifted_rolling_mean(grouped["points"], max(1, window // 3)) / 3.0,
             }
         )
 
         # Strengths: rolling goal rates normalized by the global average.
         global_mean_goals = max(float(long["goals_for"].mean()), 1e-9)
-        rolled["attack_strength"] = rolled["form_goals_for"] / global_mean_goals
-        rolled["defense_strength"] = 1.0 - (rolled["form_goals_against"] / global_mean_goals)
+        rolled["attack_strength_index"] = rolled["form_goals_for"] / global_mean_goals
+        rolled["defense_strength_index"] = 1.0 - (rolled["form_goals_against"] / global_mean_goals)
+        rolled["team_strength_index"] = (rolled["attack_strength_index"] + rolled["defense_strength_index"]) / 2.0
 
         # Neutral priors for a team's first matches (no history yet).
         defaults = {
@@ -128,8 +137,11 @@ class MatchFeatureBuilder:
             "form_goals_for": global_mean_goals,
             "form_goals_against": global_mean_goals,
             "clean_sheet_rate": 0.0,
-            "attack_strength": 1.0,
-            "defense_strength": 0.0,
+            "form_score": 0.33,
+            "momentum_score": 0.33,
+            "attack_strength_index": 1.0,
+            "defense_strength_index": 0.0,
+            "team_strength_index": 0.5,
         }
         return rolled.fillna(defaults)
 

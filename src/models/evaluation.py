@@ -16,6 +16,7 @@ from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
     f1_score,
+    log_loss,
     precision_score,
     recall_score,
     roc_auc_score,
@@ -29,12 +30,18 @@ def compute_metrics(
     y_true: np.ndarray, y_pred: np.ndarray, y_proba: np.ndarray
 ) -> dict[str, float]:
     """Return the standard metric dictionary for a fitted classifier."""
+    y_true_one_hot = np.zeros_like(y_proba)
+    y_true_one_hot[np.arange(len(y_true)), y_true] = 1
+    brier = float(np.mean(np.sum((y_proba - y_true_one_hot)**2, axis=1)))
+    
     return {
         "accuracy": float(accuracy_score(y_true, y_pred)),
         "precision_macro": float(precision_score(y_true, y_pred, average="macro", zero_division=0)),
         "recall_macro": float(recall_score(y_true, y_pred, average="macro", zero_division=0)),
         "f1_macro": float(f1_score(y_true, y_pred, average="macro", zero_division=0)),
         "roc_auc_ovr": float(roc_auc_score(y_true, y_proba, multi_class="ovr", average="macro")),
+        "log_loss": float(log_loss(y_true, y_proba)),
+        "brier_score": brier,
     }
 
 
