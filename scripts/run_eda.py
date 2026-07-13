@@ -67,11 +67,23 @@ def main() -> int:
     logger.info("Home advantage: %s", home_adv)
 
     # --- Charts -------------------------------------------------------
-    _line_chart(yearly, "year", "avg_goals", "Average Goals per Match by Year",
-                FIGURES_DIR / "avg_goals_per_year.png")
-    _bar_chart(teams[teams["matches_played"] >= 100].head(15), "team", "win_pct",
-               "Top 15 Teams by Win % (min 100 matches)", FIGURES_DIR / "top_teams_win_pct.png")
-    _heatmap(corr, "Feature Correlation Matrix", FIGURES_DIR / "feature_correlations.png")
+    _line_chart(
+        yearly,
+        "year",
+        "avg_goals",
+        "Average Goals per Match by Year",
+        FIGURES_DIR / "avg_goals_per_year.png",
+    )
+    _bar_chart(
+        teams[teams["matches_played"] >= 100].head(15),
+        "team",
+        "win_pct",
+        "Top 15 Teams by Win % (min 100 matches)",
+        FIGURES_DIR / "top_teams_win_pct.png",
+    )
+    _heatmap(
+        corr, "Feature Correlation Matrix", FIGURES_DIR / "feature_correlations.png"
+    )
 
     logger.info("EDA report written to %s", REPORTS_DIR.resolve())
     return 0
@@ -105,7 +117,9 @@ def _heatmap(corr, title: str, path: Path) -> None:
     ax.set_yticks(range(len(corr.index)), corr.index)
     for i in range(len(corr.index)):
         for j in range(len(corr.columns)):
-            ax.text(j, i, f"{corr.values[i, j]:.2f}", ha="center", va="center", fontsize=8)
+            ax.text(
+                j, i, f"{corr.values[i, j]:.2f}", ha="center", va="center", fontsize=8
+            )
     fig.colorbar(image, ax=ax, shrink=0.8)
     ax.set_title(title)
     fig.tight_layout()

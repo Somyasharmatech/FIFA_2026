@@ -20,8 +20,11 @@ def goals_per_year(matches: pd.DataFrame) -> pd.DataFrame:
     """Average and total goals per calendar year."""
     return (
         matches.groupby("year")
-        .agg(matches_played=("total_goals", "size"), avg_goals=("total_goals", "mean"),
-             total_goals=("total_goals", "sum"))
+        .agg(
+            matches_played=("total_goals", "size"),
+            avg_goals=("total_goals", "mean"),
+            total_goals=("total_goals", "sum"),
+        )
         .reset_index()
     )
 
@@ -83,7 +86,7 @@ def home_advantage_test(matches: pd.DataFrame) -> dict[str, Any]:
     Returns:
         Dict with group means, t-statistic, p-value, and sample size.
     """
-    non_neutral = matches[matches["neutral"] == False]
+    non_neutral = matches[not matches["neutral"]]
     t_stat, p_value = stats.ttest_ind(
         non_neutral["home_score"], non_neutral["away_score"], equal_var=False
     )
@@ -96,7 +99,9 @@ def home_advantage_test(matches: pd.DataFrame) -> dict[str, Any]:
     }
 
 
-def feature_correlations(features: pd.DataFrame, columns: list[str] | None = None) -> pd.DataFrame:
+def feature_correlations(
+    features: pd.DataFrame, columns: list[str] | None = None
+) -> pd.DataFrame:
     """Pearson correlation matrix over numeric feature columns."""
     numeric = features[columns] if columns else features.select_dtypes("number")
     return numeric.corr(numeric_only=True)

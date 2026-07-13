@@ -44,7 +44,9 @@ SAMPLE_SIZE = 500
 
 def main() -> int:
     """Generate global SHAP artifacts and optional match explanation."""
-    parser = argparse.ArgumentParser(description="Explain the champion model with SHAP.")
+    parser = argparse.ArgumentParser(
+        description="Explain the champion model with SHAP."
+    )
     parser.add_argument("--home", type=str, default=None, help="Home team to explain.")
     parser.add_argument("--away", type=str, default=None, help="Away team to explain.")
     args = parser.parse_args()
@@ -65,7 +67,9 @@ def main() -> int:
     features["neutral"] = features["neutral"].astype(int)
     x_all = features[list(FEATURE_COLUMNS)].to_numpy(dtype=float)
     rng = np.random.default_rng(config.models.random_state)
-    sample = x_all[rng.choice(len(x_all), size=min(SAMPLE_SIZE, len(x_all)), replace=False)]
+    sample = x_all[
+        rng.choice(len(x_all), size=min(SAMPLE_SIZE, len(x_all)), replace=False)
+    ]
 
     explainer = ModelExplainer(model, FEATURE_COLUMNS, background=sample)
 
@@ -95,12 +99,16 @@ def _explain_match(config, db, model, explainer, home: str, away: str) -> None:
             return
 
     engine = MatchProbabilityEngine(
-        model=model, states=states, h2h=builder.build_h2h(cleaned),
+        model=model,
+        states=states,
+        h2h=builder.build_h2h(cleaned),
         hosts=tuple(config.simulation.hosts),
     )
     vector = engine.feature_vector(home, away)
     probs = engine.match_probabilities(home, away)
-    predicted_class = int(np.argmax([probs[2], probs[1], probs[0]]))  # model class order
+    predicted_class = int(
+        np.argmax([probs[2], probs[1], probs[0]])
+    )  # model class order
     contributions = explainer.explain_prediction(vector, predicted_class)
 
     narrative = generate_match_narrative(home, away, probs, contributions)
@@ -111,7 +119,9 @@ def _explain_match(config, db, model, explainer, home: str, away: str) -> None:
 
 def _plot_importance(importance) -> None:
     fig, ax = plt.subplots(figsize=(9, 7))
-    ax.barh(importance["feature"][::-1], importance["importance"][::-1], color="#7c4dff")
+    ax.barh(
+        importance["feature"][::-1], importance["importance"][::-1], color="#7c4dff"
+    )
     ax.set_xlabel("Mean |SHAP value|")
     ax.set_title("Global Feature Importance (SHAP)")
     fig.tight_layout()
@@ -124,8 +134,10 @@ def _plot_beeswarm(explainer: ModelExplainer, sample: np.ndarray) -> None:
     values = explainer.shap_values(sample)
     class_index = min(2, values.shape[2] - 1)
     shap.summary_plot(
-        values[:, :, class_index], sample,
-        feature_names=list(FEATURE_COLUMNS), show=False,
+        values[:, :, class_index],
+        sample,
+        feature_names=list(FEATURE_COLUMNS),
+        show=False,
     )
     plt.title("SHAP Summary \u2014 home win class")
     plt.tight_layout()
@@ -134,9 +146,15 @@ def _plot_beeswarm(explainer: ModelExplainer, sample: np.ndarray) -> None:
 
 
 def _plot_contributions(contributions, home: str, away: str) -> None:
-    colors = ["#00c896" if c > 0 else "#ff5252" for c in contributions["contribution"][::-1]]
+    colors = [
+        "#00c896" if c > 0 else "#ff5252" for c in contributions["contribution"][::-1]
+    ]
     fig, ax = plt.subplots(figsize=(9, 6))
-    ax.barh(contributions["feature"][::-1], contributions["contribution"][::-1], color=colors)
+    ax.barh(
+        contributions["feature"][::-1],
+        contributions["contribution"][::-1],
+        color=colors,
+    )
     ax.axvline(0, color="grey", linewidth=0.8)
     ax.set_xlabel("SHAP contribution to predicted outcome")
     ax.set_title(f"Why: {home} vs {away}")

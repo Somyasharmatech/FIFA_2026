@@ -32,13 +32,21 @@ sims = load_table("simulation_probabilities")
 if cleaned is not None:
     teams = int(elo["team"].nunique()) if elo is not None else 0
     top_team = elo.iloc[0]["team"] if elo is not None and len(elo) else "\u2014"
-    favorite = sims.iloc[0]["team"] if sims is not None and len(sims) else "Run simulation"
-    metric_row([
-        ("Matches analyzed", f"{len(cleaned):,}", f"{cleaned['year'].min()}\u2013{cleaned['year'].max()}"),
-        ("National teams", f"{teams:,}", "Elo-rated"),
-        ("Elo leader", str(top_team), "live from data"),
-        ("Title favorite", str(favorite), "Monte Carlo"),
-    ])
+    favorite = (
+        sims.iloc[0]["team"] if sims is not None and len(sims) else "Run simulation"
+    )
+    metric_row(
+        [
+            (
+                "Matches analyzed",
+                f"{len(cleaned):,}",
+                f"{cleaned['year'].min()}\u2013{cleaned['year'].max()}",
+            ),
+            ("National teams", f"{teams:,}", "Elo-rated"),
+            ("Elo leader", str(top_team), "live from data"),
+            ("Title favorite", str(favorite), "Monte Carlo"),
+        ]
+    )
 else:
     st.info(
         "**Get started:** run the pipeline from the repository root:\n\n"

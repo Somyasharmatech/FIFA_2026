@@ -171,7 +171,9 @@ def load_config(config_path: Path | str = DEFAULT_CONFIG_PATH) -> AppConfig:
         log_level=_env("FIFA_LOG_LEVEL", raw["logging"]["level"]),
         log_format=raw["logging"]["format"],
         http=HttpConfig(
-            timeout_seconds=int(_env("FIFA_HTTP_TIMEOUT", str(http_cfg["timeout_seconds"]))),
+            timeout_seconds=int(
+                _env("FIFA_HTTP_TIMEOUT", str(http_cfg["timeout_seconds"]))
+            ),
             max_retries=int(_env("FIFA_HTTP_RETRIES", str(http_cfg["max_retries"]))),
             backoff_seconds=float(http_cfg["backoff_seconds"]),
             user_agent=http_cfg["user_agent"],

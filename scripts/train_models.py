@@ -39,8 +39,12 @@ FIGURES_DIR = REPORTS_DIR / "figures"
 def main() -> int:
     """Run the full training pipeline."""
     parser = argparse.ArgumentParser(description="Train and select outcome models.")
-    parser.add_argument("--models", nargs="*", default=None,
-                        help="Subset of models to train (default: all six).")
+    parser.add_argument(
+        "--models",
+        nargs="*",
+        default=None,
+        help="Subset of models to train (default: all six).",
+    )
     args = parser.parse_args()
 
     config = load_config()
@@ -72,16 +76,20 @@ def main() -> int:
     trainer.save_best(result, dataset, config.models_dir)
 
     result.leaderboard.to_csv(REPORTS_DIR / "model_leaderboard.csv", index=False)
-    logger.info("Leaderboard:\n%s",
-                result.leaderboard.drop(columns=["best_params"]).to_string(index=False))
+    logger.info(
+        "Leaderboard:\n%s",
+        result.leaderboard.drop(columns=["best_params"]).to_string(index=False),
+    )
 
     # Evaluation charts for the champion.
     y_pred = result.best_model.predict(dataset.x_test).ravel()
     y_proba = result.best_model.predict_proba(dataset.x_test)
-    _plot_confusion(confusion_frame(dataset.y_test, y_pred, dataset.class_names),
-                    result.best_name)
-    _plot_roc(roc_curve_points(dataset.y_test, y_proba, dataset.class_names),
-              result.best_name)
+    _plot_confusion(
+        confusion_frame(dataset.y_test, y_pred, dataset.class_names), result.best_name
+    )
+    _plot_roc(
+        roc_curve_points(dataset.y_test, y_proba, dataset.class_names), result.best_name
+    )
     return 0
 
 
@@ -103,7 +111,9 @@ def _plot_confusion(matrix, model_name: str) -> None:
 def _plot_roc(curves: dict, model_name: str) -> None:
     fig, ax = plt.subplots(figsize=(7, 6))
     for class_name, curve in curves.items():
-        ax.plot(curve["fpr"], curve["tpr"], label=f"{class_name} (AUC {curve['auc']:.3f})")
+        ax.plot(
+            curve["fpr"], curve["tpr"], label=f"{class_name} (AUC {curve['auc']:.3f})"
+        )
     ax.plot([0, 1], [0, 1], linestyle="--", color="grey", linewidth=1)
     ax.set_xlabel("False positive rate")
     ax.set_ylabel("True positive rate")

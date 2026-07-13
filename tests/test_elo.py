@@ -5,7 +5,6 @@ from __future__ import annotations
 import pandas as pd
 
 from src.features.elo import (
-    EloParameters,
     EloRatingEngine,
     expected_score,
     goal_difference_multiplier,
@@ -57,9 +56,12 @@ def test_pre_match_ratings_have_no_leakage() -> None:
 def test_world_cup_moves_ratings_more_than_friendly() -> None:
     base = pd.DataFrame(
         {
-            "home_team": ["A"], "away_team": ["B"],
-            "home_score": [1], "away_score": [0],
-            "neutral": [True], "importance": [4],
+            "home_team": ["A"],
+            "away_team": ["B"],
+            "home_score": [1],
+            "away_score": [0],
+            "neutral": [True],
+            "importance": [4],
         }
     )
     friendly = base.assign(importance=1)

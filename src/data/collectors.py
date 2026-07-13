@@ -53,7 +53,9 @@ class DatasetCollector:
         logger.info("Collected %d datasets", len(frames))
         return frames
 
-    def collect(self, dataset: DatasetConfig, force_refresh: bool = False) -> pd.DataFrame:
+    def collect(
+        self, dataset: DatasetConfig, force_refresh: bool = False
+    ) -> pd.DataFrame:
         """Return a single dataset, using the local cache when available."""
         target = self._config.raw_dir / dataset.filename
         if target.exists() and not force_refresh:
@@ -84,7 +86,13 @@ class DatasetCollector:
                 wait = http.backoff_seconds * (2 ** (attempt - 1))
                 logger.warning(
                     "Attempt %d/%d failed for %s (%s); retrying in %.1fs",
-                    attempt, http.max_retries, url, exc, wait,
+                    attempt,
+                    http.max_retries,
+                    url,
+                    exc,
+                    wait,
                 )
                 time.sleep(wait)
-        raise DownloadError(f"Failed to download {url} after {http.max_retries} attempts") from last_error
+        raise DownloadError(
+            f"Failed to download {url} after {http.max_retries} attempts"
+        ) from last_error

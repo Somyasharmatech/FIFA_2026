@@ -43,7 +43,7 @@ def load_or_seed_groups(
     groups = {name: [] for name in group_names}
     # Snake seeding: pot 1 fills A->L, pot 2 fills L->A, and so on.
     for pot in range(group_size):
-        pot_teams = teams[pot * n_groups:(pot + 1) * n_groups]
+        pot_teams = teams[pot * n_groups : (pot + 1) * n_groups]
         order = group_names if pot % 2 == 0 else list(reversed(group_names))
         for name, team in zip(order, pot_teams):
             groups[name].append(team)

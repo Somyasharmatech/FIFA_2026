@@ -13,12 +13,14 @@ from app.ui import hero, section, setup_page  # noqa: E402
 
 setup_page("About", "\u2139\ufe0f")
 
-hero("About this platform", "An end-to-end, open-source football analytics stack: "
-     "data engineering, machine learning, Monte Carlo simulation, and explainable AI.")
+hero(
+    "About this platform",
+    "An end-to-end, open-source football analytics stack: "
+    "data engineering, machine learning, Monte Carlo simulation, and explainable AI.",
+)
 
 section("Methodology")
-st.markdown(
-    """
+st.markdown("""
 1. **Data** \u2014 every international match since 1872 (CC0 datasets), cleaned and
    normalized, stored in SQLite.
 2. **Features** \u2014 historical Elo (importance-weighted K-factors, venue-aware),
@@ -31,8 +33,7 @@ st.markdown(
    every match sampled from the model's probabilities.
 5. **Explainability** \u2014 SHAP values behind every prediction, translated into
    plain-English narratives.
-"""
-)
+""")
 
 section("Tech stack")
 st.markdown(
@@ -42,8 +43,7 @@ st.markdown(
 )
 
 section("Honesty box")
-st.markdown(
-    """
+st.markdown("""
 - **No hardcoded predictions.** Change the data or retrain the model and every
   number on this dashboard changes with it.
 - Football is gloriously random: even a 25% champion probability means the
@@ -51,8 +51,7 @@ st.markdown(
 - Group seeding uses current Elo ratings until the official draw is placed in
   `data/wc2026_groups.csv`.
 - All imagery is generated with CSS gradients \u2014 no licensed assets required.
-"""
-)
+""")
 
 section("Links")
 st.markdown(

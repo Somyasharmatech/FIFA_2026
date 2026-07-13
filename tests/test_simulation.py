@@ -30,9 +30,14 @@ class _EloStubModel:
 def _states(teams: dict[str, float]) -> dict[str, TeamState]:
     return {
         name: TeamState(
-            team=name, elo=elo, form_win_rate=0.5, form_goals_for=1.4,
-            form_goals_against=1.4, clean_sheet_rate=0.3,
-            attack_strength=1.0, defense_strength=0.0,
+            team=name,
+            elo=elo,
+            form_win_rate=0.5,
+            form_goals_for=1.4,
+            form_goals_against=1.4,
+            clean_sheet_rate=0.3,
+            attack_strength=1.0,
+            defense_strength=0.0,
         )
         for name, elo in teams.items()
     }
@@ -41,10 +46,14 @@ def _states(teams: dict[str, float]) -> dict[str, TeamState]:
 @pytest.fixture()
 def engine() -> MatchProbabilityEngine:
     teams = {
-        "Strong1": 2000.0, "Strong2": 1950.0,
-        "Mid1": 1600.0, "Mid2": 1580.0,
-        "Mid3": 1500.0, "Mid4": 1450.0,
-        "Weak1": 1200.0, "Weak2": 1150.0
+        "Strong1": 2000.0,
+        "Strong2": 1950.0,
+        "Mid1": 1600.0,
+        "Mid2": 1580.0,
+        "Mid3": 1500.0,
+        "Mid4": 1450.0,
+        "Weak1": 1200.0,
+        "Weak2": 1150.0,
     }
     return MatchProbabilityEngine(_EloStubModel(), _states(teams), h2h={})
 
@@ -55,7 +64,9 @@ def test_probabilities_sum_to_one(engine: MatchProbabilityEngine) -> None:
     assert p_home > p_away  # much higher Elo must dominate
 
 
-def test_pairwise_matrix_covers_all_ordered_pairs(engine: MatchProbabilityEngine) -> None:
+def test_pairwise_matrix_covers_all_ordered_pairs(
+    engine: MatchProbabilityEngine,
+) -> None:
     teams = ["Strong1", "Strong2", "Mid1", "Mid2", "Mid3", "Mid4", "Weak1", "Weak2"]
     matrix = engine.pairwise_matrix(teams)
     assert set(matrix) == set(itertools.permutations(teams, 2))

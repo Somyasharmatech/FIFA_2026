@@ -10,7 +10,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 
-from app.ui import hero, metric_row, missing_data_warning, section, setup_page  # noqa: E402
+from app.ui import (
+    hero,
+    metric_row,
+    missing_data_warning,
+    section,
+    setup_page,
+)  # noqa: E402
 
 setup_page("Match Statistics", "\U0001f4ca")
 
@@ -19,8 +25,11 @@ from src.analysis.eda import feature_correlations  # noqa: E402
 from src.simulation.team_state import TeamStateBuilder  # noqa: E402
 from src.visualization import charts  # noqa: E402
 
-hero("Match Statistics", "Team analytics: form, strengths, Elo trajectory, and the "
-     "statistical relationships behind the model.")
+hero(
+    "Match Statistics",
+    "Team analytics: form, strengths, Elo trajectory, and the "
+    "statistical relationships behind the model.",
+)
 
 cleaned = load_table("cleaned_results")
 features = load_table("match_features")
@@ -30,42 +39,68 @@ if cleaned is None or features is None or elo is None:
     st.stop()
 
 teams = sorted(elo["team"].tolist())
-team = st.selectbox("Country", teams, index=teams.index("Argentina") if "Argentina" in teams else 0)
+team = st.selectbox(
+    "Country", teams, index=teams.index("Argentina") if "Argentina" in teams else 0
+)
 
 config = get_config()
 state = TeamStateBuilder(config.features.form_window).build_states(cleaned, elo)[team]
 record = team_record(cleaned, team)
 
 section(f"{team} \u2014 headline numbers")
-metric_row([
-    ("Win %", f"{record['win_pct']:.1f}%", f"{record['played']} matches"),
-    ("Goals for", str(record["goals_for"]), f"{state.form_goals_for:.2f}/game recently"),
-    ("Goals against", str(record["goals_against"]), f"{state.form_goals_against:.2f}/game recently"),
-    ("Elo rating", f"{state.elo:.0f}", ""),
-    ("Attack strength", f"{state.attack_strength:.2f}", "vs global avg 1.00"),
-    ("Clean sheet rate", f"{state.clean_sheet_rate:.0%}", f"last {config.features.form_window}"),
-])
+metric_row(
+    [
+        ("Win %", f"{record['win_pct']:.1f}%", f"{record['played']} matches"),
+        (
+            "Goals for",
+            str(record["goals_for"]),
+            f"{state.form_goals_for:.2f}/game recently",
+        ),
+        (
+            "Goals against",
+            str(record["goals_against"]),
+            f"{state.form_goals_against:.2f}/game recently",
+        ),
+        ("Elo rating", f"{state.elo:.0f}", ""),
+        ("Attack strength", f"{state.attack_strength:.2f}", "vs global avg 1.00"),
+        (
+            "Clean sheet rate",
+            f"{state.clean_sheet_rate:.0%}",
+            f"last {config.features.form_window}",
+        ),
+    ]
+)
 
 section("Elo trajectory")
 home_elo = features[features["home_team"] == team][["date", "home_elo_pre"]].rename(
-    columns={"home_elo_pre": "elo"})
+    columns={"home_elo_pre": "elo"}
+)
 away_elo = features[features["away_team"] == team][["date", "away_elo_pre"]].rename(
-    columns={"away_elo_pre": "elo"})
+    columns={"away_elo_pre": "elo"}
+)
 trajectory = pd.concat([home_elo, away_elo]).sort_values("date")
-st.plotly_chart(charts.line_chart(trajectory, "date", "elo", f"{team} Elo rating over time"),
-                width='stretch')
+st.plotly_chart(
+    charts.line_chart(trajectory, "date", "elo", f"{team} Elo rating over time"),
+    width="stretch",
+)
 
 section("Recent matches")
-recent = cleaned[(cleaned["home_team"] == team) | (cleaned["away_team"] == team)].sort_values(
-    "date", ascending=False)
+recent = cleaned[
+    (cleaned["home_team"] == team) | (cleaned["away_team"] == team)
+].sort_values("date", ascending=False)
 st.dataframe(
-    recent[["date", "home_team", "home_score", "away_score", "away_team", "tournament"]].head(15),
-    width='stretch', height=380,
+    recent[
+        ["date", "home_team", "home_score", "away_score", "away_team", "tournament"]
+    ].head(15),
+    width="stretch",
+    height=380,
 )
 
 section("Feature correlation matrix")
 st.caption("Relationships between the engineered features that drive the model.")
 corr = feature_correlations(
-    features, ["elo_diff", "form_diff", "attack_diff", "defense_diff", "h2h_balance"])
-st.plotly_chart(charts.correlation_heatmap(corr, "Feature correlations"),
-                width='stretch')
+    features, ["elo_diff", "form_diff", "attack_diff", "defense_diff", "h2h_balance"]
+)
+st.plotly_chart(
+    charts.correlation_heatmap(corr, "Feature correlations"), width="stretch"
+)

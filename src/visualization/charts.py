@@ -36,8 +36,14 @@ def line_chart(frame: pd.DataFrame, x: str, y: str, title: str) -> go.Figure:
     return _style(fig, title)
 
 
-def bar_chart(frame: pd.DataFrame, x: str, y: str, title: str,
-              horizontal: bool = False, color: str = ACCENT) -> go.Figure:
+def bar_chart(
+    frame: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    horizontal: bool = False,
+    color: str = ACCENT,
+) -> go.Figure:
     if horizontal:
         fig = px.bar(frame, x=y, y=x, orientation="h", color_discrete_sequence=[color])
     else:
@@ -46,43 +52,61 @@ def bar_chart(frame: pd.DataFrame, x: str, y: str, title: str,
 
 
 def pie_chart(frame: pd.DataFrame, names: str, values: str, title: str) -> go.Figure:
-    fig = px.pie(frame, names=names, values=values, hole=0.45,
-                 color_discrete_sequence=PALETTE)
+    fig = px.pie(
+        frame, names=names, values=values, hole=0.45, color_discrete_sequence=PALETTE
+    )
     return _style(fig, title)
 
 
 def treemap(frame: pd.DataFrame, label: str, value: str, title: str) -> go.Figure:
-    fig = px.treemap(frame, path=[label], values=value,
-                     color=value, color_continuous_scale=["#131a2a", ACCENT])
+    fig = px.treemap(
+        frame,
+        path=[label],
+        values=value,
+        color=value,
+        color_continuous_scale=["#131a2a", ACCENT],
+    )
     return _style(fig, title)
 
 
 def correlation_heatmap(corr: pd.DataFrame, title: str) -> go.Figure:
     fig = go.Figure(
         go.Heatmap(
-            z=corr.values, x=list(corr.columns), y=list(corr.index),
-            colorscale="RdBu", zmid=0,
-            text=corr.round(2).values, texttemplate="%{text}",
+            z=corr.values,
+            x=list(corr.columns),
+            y=list(corr.index),
+            colorscale="RdBu",
+            zmid=0,
+            text=corr.round(2).values,
+            texttemplate="%{text}",
         )
     )
     return _style(fig, title)
 
 
-def radar_compare(categories: list[str], series: dict[str, list[float]], title: str) -> go.Figure:
+def radar_compare(
+    categories: list[str], series: dict[str, list[float]], title: str
+) -> go.Figure:
     """Radar chart comparing multiple teams over shared axes (0-1 scaled)."""
     fig = go.Figure()
     for (name, values), color in zip(series.items(), PALETTE):
         fig.add_trace(
             go.Scatterpolar(
-                r=values + values[:1], theta=categories + categories[:1],
-                fill="toself", name=name, line_color=color, opacity=0.75,
+                r=values + values[:1],
+                theta=categories + categories[:1],
+                fill="toself",
+                name=name,
+                line_color=color,
+                opacity=0.75,
             )
         )
-    fig.update_layout(polar=dict(
-        bgcolor="rgba(255,255,255,0.03)",
-        radialaxis=dict(range=[0, 1], gridcolor="rgba(255,255,255,0.12)"),
-        angularaxis=dict(gridcolor="rgba(255,255,255,0.12)"),
-    ))
+    fig.update_layout(
+        polar=dict(
+            bgcolor="rgba(255,255,255,0.03)",
+            radialaxis=dict(range=[0, 1], gridcolor="rgba(255,255,255,0.12)"),
+            angularaxis=dict(gridcolor="rgba(255,255,255,0.12)"),
+        )
+    )
     return _style(fig, title)
 
 

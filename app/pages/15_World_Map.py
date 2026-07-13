@@ -19,9 +19,11 @@ from app.ui import hero, missing_data_warning, section, setup_page
 setup_page("World Map", "\U0001f30e")
 
 from app.data_access import get_prediction_engine, load_table
-from src.visualization import charts
 
-hero("Interactive World Map", "A geographical perspective of global football dominance, team strength indices, and World Cup win probabilities.")
+hero(
+    "Interactive World Map",
+    "A geographical perspective of global football dominance, team strength indices, and World Cup win probabilities.",
+)
 
 engine = get_prediction_engine()
 sims = load_table("simulation_probabilities")
@@ -35,21 +37,23 @@ map_data = []
 for team, state in engine._states.items():
     # Attempt to align non-standard country names to Plotly's expected country names if necessary
     # Note: Plotly's 'country names' locationmode handles most standard names well.
-    # We might need some mapping for "England", "Wales" since they are part of the UK, 
+    # We might need some mapping for "England", "Wales" since they are part of the UK,
     # but for a football context, Plotly might not render sub-national entities in default country names.
     # We will pass the raw names and let Plotly match what it can.
     prob = 0.0
     if team in sims["team"].values:
         prob = sims[sims["team"] == team]["champion_prob"].values[0]
-        
-    map_data.append({
-        "Team": team,
-        "Strength Index": state.elo,
-        "Attack": state.attack_strength,
-        "Defense": state.defense_strength,
-        "Win Probability": prob,
-        "MapName": team
-    })
+
+    map_data.append(
+        {
+            "Team": team,
+            "Strength Index": state.elo,
+            "Attack": state.attack_strength,
+            "Defense": state.defense_strength,
+            "Win Probability": prob,
+            "MapName": team,
+        }
+    )
 
 df = pd.DataFrame(map_data)
 
@@ -61,7 +65,7 @@ replacements = {
     "DR Congo": "Democratic Republic of the Congo",
     "Ivory Coast": "Côte d'Ivoire",
     "North Macedonia": "Macedonia",
-    "Bosnia and Herzegovina": "Bosnia and Herz."
+    "Bosnia and Herzegovina": "Bosnia and Herz.",
 }
 df["MapName"] = df["MapName"].replace(replacements)
 
@@ -69,9 +73,9 @@ st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 metric_choice = st.radio(
     "Select Global Metric to Visualize",
     ["Strength Index", "Win Probability", "Attack", "Defense"],
-    horizontal=True
+    horizontal=True,
 )
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 section(f"Global {metric_choice}")
 
@@ -82,8 +86,10 @@ fig = px.choropleth(
     color=metric_choice,
     hover_name="Team",
     hover_data=["Strength Index", "Win Probability", "Attack", "Defense"],
-    color_continuous_scale="Viridis" if metric_choice == "Win Probability" else "Plasma",
-    projection="natural earth"
+    color_continuous_scale=(
+        "Viridis" if metric_choice == "Win Probability" else "Plasma"
+    ),
+    projection="natural earth",
 )
 
 fig.update_layout(
@@ -101,6 +107,8 @@ fig.update_layout(
     font=dict(color="#e8eaf0", family="sans-serif"),
 )
 
-st.plotly_chart(fig, width='stretch')
+st.plotly_chart(fig, width="stretch")
 
-st.info("**Note on UK Nations:** In FIFA, England, Scotland, Wales, and Northern Ireland compete separately. Standard geographical maps aggregate them under the United Kingdom, so they may not render distinct borders here.")
+st.info(
+    "**Note on UK Nations:** In FIFA, England, Scotland, Wales, and Northern Ireland compete separately. Standard geographical maps aggregate them under the United Kingdom, so they may not render distinct borders here."
+)

@@ -100,7 +100,9 @@ class ModelDatasetBuilder:
         )
         logger.info(
             "Dataset: %d train (%d-%d), %d test (%d-%d)",
-            len(dataset.x_train), *dataset.train_years,
-            len(dataset.x_test), *dataset.test_years,
+            len(dataset.x_train),
+            *dataset.train_years,
+            len(dataset.x_test),
+            *dataset.test_years,
         )
         return dataset

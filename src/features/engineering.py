@@ -54,28 +54,53 @@ class MatchFeatureBuilder:
         features["elo_diff"] = (
             features["home_elo_pre"] + advantage - features["away_elo_pre"]
         )
-        features["form_diff"] = features["home_form_win_rate"] - features["away_form_win_rate"]
+        features["form_diff"] = (
+            features["home_form_win_rate"] - features["away_form_win_rate"]
+        )
         features["attack_diff"] = (
-            features["home_attack_strength_index"] - features["away_attack_strength_index"]
+            features["home_attack_strength_index"]
+            - features["away_attack_strength_index"]
         )
         features["defense_diff"] = (
-            features["home_defense_strength_index"] - features["away_defense_strength_index"]
+            features["home_defense_strength_index"]
+            - features["away_defense_strength_index"]
         )
 
         columns = [
-            "match_id", "date", "year", "home_team", "away_team", "tournament",
-            "importance", "neutral",
-            "home_elo_pre", "away_elo_pre", "elo_diff",
-            "home_form_win_rate", "away_form_win_rate", "form_diff",
-            "home_form_goals_for", "away_form_goals_for",
-            "home_form_goals_against", "away_form_goals_against",
-            "home_clean_sheet_rate", "away_clean_sheet_rate",
-            "home_form_score", "away_form_score",
-            "home_momentum_score", "away_momentum_score",
-            "home_attack_strength_index", "away_attack_strength_index", "attack_diff",
-            "home_defense_strength_index", "away_defense_strength_index", "defense_diff",
-            "home_team_strength_index", "away_team_strength_index",
-            "h2h_balance", "outcome",
+            "match_id",
+            "date",
+            "year",
+            "home_team",
+            "away_team",
+            "tournament",
+            "importance",
+            "neutral",
+            "home_elo_pre",
+            "away_elo_pre",
+            "elo_diff",
+            "home_form_win_rate",
+            "away_form_win_rate",
+            "form_diff",
+            "home_form_goals_for",
+            "away_form_goals_for",
+            "home_form_goals_against",
+            "away_form_goals_against",
+            "home_clean_sheet_rate",
+            "away_clean_sheet_rate",
+            "home_form_score",
+            "away_form_score",
+            "home_momentum_score",
+            "away_momentum_score",
+            "home_attack_strength_index",
+            "away_attack_strength_index",
+            "attack_diff",
+            "home_defense_strength_index",
+            "away_defense_strength_index",
+            "defense_diff",
+            "home_team_strength_index",
+            "away_team_strength_index",
+            "h2h_balance",
+            "outcome",
         ]
         result = features[columns].copy()
         logger.info("Built feature matrix: %d rows, %d columns", *result.shape)
@@ -118,18 +143,29 @@ class MatchFeatureBuilder:
                 "team": long["team"],
                 "form_win_rate": _shifted_rolling_mean(grouped["win"], window),
                 "form_goals_for": _shifted_rolling_mean(grouped["goals_for"], window),
-                "form_goals_against": _shifted_rolling_mean(grouped["goals_against"], window),
-                "clean_sheet_rate": _shifted_rolling_mean(grouped["clean_sheet"], window),
+                "form_goals_against": _shifted_rolling_mean(
+                    grouped["goals_against"], window
+                ),
+                "clean_sheet_rate": _shifted_rolling_mean(
+                    grouped["clean_sheet"], window
+                ),
                 "form_score": _shifted_rolling_mean(grouped["points"], window) / 3.0,
-                "momentum_score": _shifted_rolling_mean(grouped["points"], max(1, window // 3)) / 3.0,
+                "momentum_score": _shifted_rolling_mean(
+                    grouped["points"], max(1, window // 3)
+                )
+                / 3.0,
             }
         )
 
         # Strengths: rolling goal rates normalized by the global average.
         global_mean_goals = max(float(long["goals_for"].mean()), 1e-9)
         rolled["attack_strength_index"] = rolled["form_goals_for"] / global_mean_goals
-        rolled["defense_strength_index"] = 1.0 - (rolled["form_goals_against"] / global_mean_goals)
-        rolled["team_strength_index"] = (rolled["attack_strength_index"] + rolled["defense_strength_index"]) / 2.0
+        rolled["defense_strength_index"] = 1.0 - (
+            rolled["form_goals_against"] / global_mean_goals
+        )
+        rolled["team_strength_index"] = (
+            rolled["attack_strength_index"] + rolled["defense_strength_index"]
+        ) / 2.0
 
         # Neutral priors for a team's first matches (no history yet).
         defaults = {
@@ -159,9 +195,7 @@ class MatchFeatureBuilder:
         signed = np.where(
             frame["outcome"] == "draw",
             0.0,
-            np.where(
-                (frame["outcome"] == "home_win") == first_is_home, 1.0, -1.0
-            ),
+            np.where((frame["outcome"] == "home_win") == first_is_home, 1.0, -1.0),
         )
         cumulative = (
             pd.Series(signed).groupby(pair_key).apply(lambda s: s.cumsum().shift(1))
@@ -172,8 +206,8 @@ class MatchFeatureBuilder:
         return (balance_first * np.where(first_is_home, 1.0, -1.0)).astype(float)
 
 
-def _shifted_rolling_mean(grouped: "pd.core.groupby.SeriesGroupBy", window: int) -> pd.Series:
+def _shifted_rolling_mean(
+    grouped: "pd.core.groupby.SeriesGroupBy", window: int
+) -> pd.Series:
     """Rolling mean over the previous ``window`` observations (excludes current)."""
-    return grouped.transform(
-        lambda s: s.shift(1).rolling(window, min_periods=1).mean()
-    )
+    return grouped.transform(lambda s: s.shift(1).rolling(window, min_periods=1).mean())

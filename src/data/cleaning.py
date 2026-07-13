@@ -66,9 +66,14 @@ class MatchDataCleaner:
             columns used to normalize historical country names.
         """
         self._name_map: dict[str, str] = {}
-        if former_names is not None and {"former", "current"}.issubset(former_names.columns):
+        if former_names is not None and {"former", "current"}.issubset(
+            former_names.columns
+        ):
             self._name_map = dict(
-                zip(former_names["former"].astype(str), former_names["current"].astype(str))
+                zip(
+                    former_names["former"].astype(str),
+                    former_names["current"].astype(str),
+                )
             )
 
     def clean(self, results: pd.DataFrame) -> pd.DataFrame:
@@ -93,7 +98,9 @@ class MatchDataCleaner:
         frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
         frame["home_score"] = pd.to_numeric(frame["home_score"], errors="coerce")
         frame["away_score"] = pd.to_numeric(frame["away_score"], errors="coerce")
-        frame = frame.dropna(subset=["date", "home_team", "away_team", "home_score", "away_score"])
+        frame = frame.dropna(
+            subset=["date", "home_team", "away_team", "home_score", "away_score"]
+        )
         frame["home_score"] = frame["home_score"].astype(int)
         frame["away_score"] = frame["away_score"].astype(int)
         frame["neutral"] = frame["neutral"].astype(bool)
@@ -105,7 +112,9 @@ class MatchDataCleaner:
 
         # 4. Derived columns used everywhere downstream.
         frame["year"] = frame["date"].dt.year
-        frame["importance"] = frame["tournament"].astype(str).map(classify_tournament_importance)
+        frame["importance"] = (
+            frame["tournament"].astype(str).map(classify_tournament_importance)
+        )
         frame["total_goals"] = frame["home_score"] + frame["away_score"]
         frame["outcome"] = frame.apply(_label_outcome, axis=1)
 

@@ -17,8 +17,11 @@ from app.data_access import load_table  # noqa: E402
 from src.analysis.eda import home_advantage_test, team_performance_summary  # noqa: E402
 from src.visualization import charts  # noqa: E402
 
-hero("Insights", "Findings surfaced automatically from the data and validated with "
-     "statistical tests \u2014 regenerated whenever the pipeline reruns.")
+hero(
+    "Insights",
+    "Findings surfaced automatically from the data and validated with "
+    "statistical tests \u2014 regenerated whenever the pipeline reruns.",
+)
 
 cleaned = load_table("cleaned_results")
 if cleaned is None:
@@ -27,7 +30,9 @@ if cleaned is None:
 
 section("Home advantage is real")
 test = home_advantage_test(cleaned)
-significant = "statistically significant" if test["p_value"] < 0.05 else "not significant"
+significant = (
+    "statistically significant" if test["p_value"] < 0.05 else "not significant"
+)
 st.markdown(
     f'<div class="glass-card">On non-neutral venues, home teams average '
     f"<b>{test['mean_home_goals']:.2f}</b> goals vs <b>{test['mean_away_goals']:.2f}</b> "
@@ -49,10 +54,15 @@ if shap_importance is not None:
         unsafe_allow_html=True,
     )
     st.plotly_chart(
-        charts.bar_chart(shap_importance, "feature", "importance",
-                         "Global feature importance (mean |SHAP|)", horizontal=True,
-                         color="#7c4dff"),
-        width='stretch',
+        charts.bar_chart(
+            shap_importance,
+            "feature",
+            "importance",
+            "Global feature importance (mean |SHAP|)",
+            horizontal=True,
+            color="#7c4dff",
+        ),
+        width="stretch",
     )
 else:
     st.caption("Run `python scripts/explain_model.py` to add SHAP-based insights.")
@@ -65,14 +75,26 @@ draw_rate = (
     .apply(lambda s: 100.0 * (s == "draw").mean())
     .reset_index(name="draw_pct")
 )
-st.plotly_chart(charts.line_chart(draw_rate, "decade", "draw_pct",
-                                  "Share of matches ending in a draw by decade (%)"),
-                width='stretch')
+st.plotly_chart(
+    charts.line_chart(
+        draw_rate,
+        "decade",
+        "draw_pct",
+        "Share of matches ending in a draw by decade (%)",
+    ),
+    width="stretch",
+)
 
 section("Sustained excellence")
 teams = team_performance_summary(cleaned)
 elite = teams[teams["matches_played"] >= 300].head(10)
-st.plotly_chart(charts.bar_chart(elite, "team", "win_pct",
-                                 "Highest win % among nations with 300+ matches",
-                                 horizontal=True),
-                width='stretch')
+st.plotly_chart(
+    charts.bar_chart(
+        elite,
+        "team",
+        "win_pct",
+        "Highest win % among nations with 300+ matches",
+        horizontal=True,
+    ),
+    width="stretch",
+)

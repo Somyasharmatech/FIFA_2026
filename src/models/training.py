@@ -70,8 +70,12 @@ def _search_spaces(seed: int) -> dict[str, tuple[BaseEstimator, dict[str, list[A
     """Estimator + hyperparameter distribution per algorithm."""
     return {
         "logistic_regression": (
-            Pipeline([("scaler", StandardScaler()),
-                      ("clf", LogisticRegression(max_iter=2000, random_state=seed))]),
+            Pipeline(
+                [
+                    ("scaler", StandardScaler()),
+                    ("clf", LogisticRegression(max_iter=2000, random_state=seed)),
+                ]
+            ),
             {"clf__C": [0.01, 0.1, 0.5, 1.0, 5.0, 10.0]},
         ),
         "random_forest": (
@@ -92,8 +96,10 @@ def _search_spaces(seed: int) -> dict[str, tuple[BaseEstimator, dict[str, list[A
         ),
         "xgboost": (
             XGBClassifier(
-                objective="multi:softprob", eval_metric="mlogloss",
-                random_state=seed, n_jobs=-1,
+                objective="multi:softprob",
+                eval_metric="mlogloss",
+                random_state=seed,
+                n_jobs=-1,
             ),
             {
                 "n_estimators": [200, 400, 600],
@@ -103,7 +109,9 @@ def _search_spaces(seed: int) -> dict[str, tuple[BaseEstimator, dict[str, list[A
             },
         ),
         "lightgbm": (
-            LGBMClassifier(objective="multiclass", random_state=seed, n_jobs=-1, verbosity=-1),
+            LGBMClassifier(
+                objective="multiclass", random_state=seed, n_jobs=-1, verbosity=-1
+            ),
             {
                 "n_estimators": [200, 400, 600],
                 "learning_rate": [0.03, 0.05, 0.1],
@@ -113,8 +121,10 @@ def _search_spaces(seed: int) -> dict[str, tuple[BaseEstimator, dict[str, list[A
         ),
         "catboost": (
             CatBoostClassifier(
-                loss_function="MultiClass", random_seed=seed,
-                verbose=False, allow_writing_files=False,
+                loss_function="MultiClass",
+                random_seed=seed,
+                verbose=False,
+                allow_writing_files=False,
             ),
             {
                 "iterations": [200, 400, 600],
@@ -143,7 +153,12 @@ class ModelTrainer:
             if name not in spaces:
                 raise ValueError(f"Unknown model '{name}'. Known: {sorted(spaces)}")
             estimator, params = spaces[name]
-            logger.info("Tuning %s (%d candidates, %d folds)", name, settings.n_iter, settings.cv_folds)
+            logger.info(
+                "Tuning %s (%d candidates, %d folds)",
+                name,
+                settings.n_iter,
+                settings.cv_folds,
+            )
 
             search = RandomizedSearchCV(
                 estimator,
@@ -164,24 +179,37 @@ class ModelTrainer:
 
             # Conditional Calibration
             try:
-                calibrated_model = CalibratedClassifierCV(estimator=model, method="sigmoid", cv=3)
+                calibrated_model = CalibratedClassifierCV(
+                    estimator=model, method="sigmoid", cv=3
+                )
                 calibrated_model.fit(dataset.x_train, dataset.y_train)
                 y_pred_cal = calibrated_model.predict(dataset.x_test).ravel()
                 y_proba_cal = calibrated_model.predict_proba(dataset.x_test)
                 metrics_cal = compute_metrics(dataset.y_test, y_pred_cal, y_proba_cal)
 
                 # Use calibration only if it improves both log loss and brier score
-                if metrics_cal["log_loss"] < metrics_uncal["log_loss"] and metrics_cal["brier_score"] < metrics_uncal["brier_score"]:
-                    logger.info("%s -> Calibration IMPROVED performance. Using calibrated model.", name)
+                if (
+                    metrics_cal["log_loss"] < metrics_uncal["log_loss"]
+                    and metrics_cal["brier_score"] < metrics_uncal["brier_score"]
+                ):
+                    logger.info(
+                        "%s -> Calibration IMPROVED performance. Using calibrated model.",
+                        name,
+                    )
                     model = calibrated_model
                     metrics = metrics_cal
                     used_cal = True
                 else:
-                    logger.info("%s -> Calibration DID NOT improve performance. Using uncalibrated.", name)
+                    logger.info(
+                        "%s -> Calibration DID NOT improve performance. Using uncalibrated.",
+                        name,
+                    )
                     metrics = metrics_uncal
                     used_cal = False
             except Exception as e:
-                logger.warning("%s -> Calibration failed: %s. Using uncalibrated.", name, e)
+                logger.warning(
+                    "%s -> Calibration failed: %s. Using uncalibrated.", name, e
+                )
                 metrics = metrics_uncal
                 used_cal = False
 
@@ -196,7 +224,9 @@ class ModelTrainer:
                     "best_params": json.dumps(search.best_params_),
                 }
             )
-            logger.info("%s metrics: %s", name, {k: round(v, 4) for k, v in metrics.items()})
+            logger.info(
+                "%s metrics: %s", name, {k: round(v, 4) for k, v in metrics.items()}
+            )
 
         leaderboard = (
             pd.DataFrame(rows)
@@ -212,7 +242,9 @@ class ModelTrainer:
             fitted_models=fitted,
         )
 
-    def save_best(self, result: TrainingResult, dataset: ModelDataset, models_dir: Path) -> Path:
+    def save_best(
+        self, result: TrainingResult, dataset: ModelDataset, models_dir: Path
+    ) -> Path:
         """Persist the champion model and its metadata; return the model path."""
         models_dir.mkdir(parents=True, exist_ok=True)
         model_path = models_dir / "best_model.joblib"

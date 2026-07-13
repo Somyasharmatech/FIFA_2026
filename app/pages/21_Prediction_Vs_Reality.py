@@ -9,16 +9,20 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from app.ui import hero, section, setup_page
+from app.ui import hero, setup_page
 from app.data_access import get_config
 
 setup_page("Prediction vs Reality", "⚖️")
 
 config = get_config()
 
-hero("Prediction vs Reality", "Post-tournament evaluation module comparing the AI's forecasts against actual historical outcomes.")
+hero(
+    "Prediction vs Reality",
+    "Post-tournament evaluation module comparing the AI's forecasts against actual historical outcomes.",
+)
 
-st.markdown(f"""
+st.markdown(
+    f"""
 <div class="glass-card" style="text-align: center; padding: 3rem;">
     <h2>⏳ Awaiting {config.tournament.name} {config.tournament.year} Results</h2>
     <p style="font-size: 1.2rem; color: #a0a0a0; max-width: 600px; margin: 0 auto;">
@@ -33,4 +37,6 @@ st.markdown(f"""
         <li>✅ Major Upsets correctly identified</li>
     </ul>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)

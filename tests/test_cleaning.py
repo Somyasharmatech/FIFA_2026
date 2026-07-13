@@ -17,7 +17,12 @@ def raw_results() -> pd.DataFrame:
             "away_team": ["France", "France", "Spain", "Brazil"],
             "home_score": [3, 3, 1, 0],
             "away_score": [3, 3, 1, 3],
-            "tournament": ["FIFA World Cup", "FIFA World Cup", "Friendly", "FIFA World Cup"],
+            "tournament": [
+                "FIFA World Cup",
+                "FIFA World Cup",
+                "Friendly",
+                "FIFA World Cup",
+            ],
             "neutral": [True, True, False, True],
         }
     )

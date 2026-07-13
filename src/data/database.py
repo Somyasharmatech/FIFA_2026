@@ -45,17 +45,23 @@ class SQLiteClient:
             frame.to_sql(table, conn, if_exists="replace", index=False)
             # Create indices for common access patterns
             if "date" in frame.columns:
-                conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_date ON {table}(date)")
+                conn.execute(
+                    f"CREATE INDEX IF NOT EXISTS idx_{table}_date ON {table}(date)"
+                )
             if "home_team" in frame.columns and "away_team" in frame.columns:
-                conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_teams ON {table}(home_team, away_team)")
+                conn.execute(
+                    f"CREATE INDEX IF NOT EXISTS idx_{table}_teams ON {table}(home_team, away_team)"
+                )
             if "team" in frame.columns:
-                conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_team ON {table}(team)")
+                conn.execute(
+                    f"CREATE INDEX IF NOT EXISTS idx_{table}_team ON {table}(team)"
+                )
         logger.info("Ingested %d rows into table '%s'", len(frame), table)
         return len(frame)
 
     def append_to_table(self, frame: pd.DataFrame, table: str) -> int:
         """Append the contents of ``frame`` to ``table``.
-        
+
         Returns:
             Number of rows appended.
         """
@@ -67,7 +73,9 @@ class SQLiteClient:
     def read_table(self, table: str) -> pd.DataFrame:
         """Return an entire table as a DataFrame."""
         with self.connection() as conn:
-            return pd.read_sql_query(f"SELECT * FROM {table}", conn)  # noqa: S608 - table from config
+            return pd.read_sql_query(
+                f"SELECT * FROM {table}", conn
+            )  # noqa: S608 - table from config
 
     def query(self, sql: str, params: tuple | None = None) -> pd.DataFrame:
         """Run a parameterized read query and return a DataFrame."""

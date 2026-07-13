@@ -80,3 +80,10 @@ section[data-testid="stSidebar"] {
 /* Dataframes and tabs rounding */
 div[data-testid="stDataFrame"] { border-radius: 14px; overflow: hidden; }
 button[data-baseweb="tab"] { border-radius: 10px 10px 0 0; }
+
+/* CTA Buttons */
+.cta-button { display: inline-block; padding: 0.8rem 1.6rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s ease; }
+.cta-button.primary { background: linear-gradient(90deg, #00c896, #009688); color: #fff !important; border: none; box-shadow: 0 4px 12px rgba(0, 200, 150, 0.3); }
+.cta-button.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 200, 150, 0.4); }
+.cta-button.secondary { background: rgba(255, 255, 255, 0.1); color: #fff !important; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); }
+.cta-button.secondary:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }

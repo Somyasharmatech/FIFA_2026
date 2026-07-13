@@ -52,7 +52,9 @@ class MatchProbabilityEngine:
         self._hosts = set(hosts)
         self._importance = importance
 
-    def feature_vector(self, home: str, away: str, overrides: dict[str, float] | None = None) -> np.ndarray:
+    def feature_vector(
+        self, home: str, away: str, overrides: dict[str, float] | None = None
+    ) -> np.ndarray:
         """Feature vector for a hypothetical match, matching FEATURE_COLUMNS."""
         hs, as_ = self._states[home], self._states[away]
         neutral = 0 if home in self._hosts else 1
@@ -80,9 +82,13 @@ class MatchProbabilityEngine:
             values.update(overrides)
         return np.array([values[column] for column in FEATURE_COLUMNS], dtype=float)
 
-    def match_probabilities(self, home: str, away: str, overrides: dict[str, float] | None = None) -> tuple[float, float, float]:
+    def match_probabilities(
+        self, home: str, away: str, overrides: dict[str, float] | None = None
+    ) -> tuple[float, float, float]:
         """Return (p_home_win, p_draw, p_away_win) for one fixture."""
-        proba = self._model.predict_proba(self.feature_vector(home, away, overrides).reshape(1, -1))[0]
+        proba = self._model.predict_proba(
+            self.feature_vector(home, away, overrides).reshape(1, -1)
+        )[0]
         # Model class order is (away_win, draw, home_win).
         return float(proba[2]), float(proba[1]), float(proba[0])
 

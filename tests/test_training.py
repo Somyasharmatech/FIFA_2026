@@ -18,7 +18,9 @@ def _separable_features(n: int = 200) -> pd.DataFrame:
     frame["year"] = np.linspace(1995, 2024, n).astype(int)
     elo = rng.normal(scale=200, size=n)
     frame["elo_diff"] = elo
-    frame["outcome"] = np.where(elo > 80, "home_win", np.where(elo < -80, "away_win", "draw"))
+    frame["outcome"] = np.where(
+        elo > 80, "home_win", np.where(elo < -80, "away_win", "draw")
+    )
     return frame
 
 

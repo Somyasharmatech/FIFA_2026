@@ -81,7 +81,9 @@ def team_record(cleaned: pd.DataFrame, team: str) -> dict[str, float]:
     home = cleaned[cleaned["home_team"] == team]
     away = cleaned[cleaned["away_team"] == team]
     wins = (home["outcome"] == "home_win").sum() + (away["outcome"] == "away_win").sum()
-    losses = (home["outcome"] == "away_win").sum() + (away["outcome"] == "home_win").sum()
+    losses = (home["outcome"] == "away_win").sum() + (
+        away["outcome"] == "home_win"
+    ).sum()
     draws = (home["outcome"] == "draw").sum() + (away["outcome"] == "draw").sum()
     played = len(home) + len(away)
     goals_for = home["home_score"].sum() + away["away_score"].sum()
@@ -89,10 +91,13 @@ def team_record(cleaned: pd.DataFrame, team: str) -> dict[str, float]:
     clean_sheets = (home["away_score"] == 0).sum() + (away["home_score"] == 0).sum()
     return {
         "played": int(played),
-        "wins": int(wins), "draws": int(draws), "losses": int(losses),
+        "wins": int(wins),
+        "draws": int(draws),
+        "losses": int(losses),
         "win_pct": 100.0 * wins / max(played, 1),
         "draw_pct": 100.0 * draws / max(played, 1),
         "loss_pct": 100.0 * losses / max(played, 1),
-        "goals_for": int(goals_for), "goals_against": int(goals_against),
+        "goals_for": int(goals_for),
+        "goals_against": int(goals_against),
         "clean_sheets": int(clean_sheets),
     }

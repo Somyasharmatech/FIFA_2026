@@ -33,22 +33,24 @@ class SimulationResult:
 class MonteCarloSimulator:
     """Simulates the full tournament ``n_runs`` times."""
 
-    def __init__(self, pair_probs: PairProbs, n_runs: int = 100_000, seed: int = 42) -> None:
+    def __init__(
+        self, pair_probs: PairProbs, n_runs: int = 100_000, seed: int = 42
+    ) -> None:
         if n_runs < 1:
             raise ValueError("n_runs must be positive")
         self._n_runs = n_runs
         self._rng = np.random.default_rng(seed)
-        
+
         # Precompute normalized cumulative probabilities for speed
         self._group_probs = {}
         self._ko_probs = {}
-        for pair, (ph, pd, pa) in pair_probs.items():
-            tot = ph + pd + pa
-            self._group_probs[pair] = (ph / tot, (ph + pd) / tot)
-            
+        for pair, (ph, p_draw, pa) in pair_probs.items():
+            tot = ph + p_draw + pa
+            self._group_probs[pair] = (ph / tot, (ph + p_draw) / tot)
+
             win_mass = max(ph + pa, 1e-9)
-            ph_adj = ph + pd * (ph / win_mass)
-            pa_adj = pa + pd * (pa / win_mass)
+            ph_adj = ph + p_draw * (ph / win_mass)
+            pa_adj = pa + p_draw * (pa / win_mass)
             self._ko_probs[pair] = ph_adj / (ph_adj + pa_adj)
 
     def run(self, groups: dict[str, list[str]]) -> SimulationResult:
@@ -109,7 +111,7 @@ class MonteCarloSimulator:
         for members in groups.values():
             points = {team: 0 for team in members}
             for i, home in enumerate(members):
-                for away in members[i + 1:]:
+                for away in members[i + 1 :]:
                     outcome = self._sample_match(home, away)
                     if outcome == "home":
                         points[home] += 3
@@ -120,7 +122,9 @@ class MonteCarloSimulator:
                         points[away] += 1
             # Random jitter breaks ties (stands in for goal difference).
             ranked = sorted(
-                members, key=lambda t: points[t] + self._rng.random() * 0.01, reverse=True
+                members,
+                key=lambda t: points[t] + self._rng.random() * 0.01,
+                reverse=True,
             )
             winners.append(ranked[0])
             runners.append(ranked[1])
@@ -131,7 +135,9 @@ class MonteCarloSimulator:
         best_thirds = [
             team
             for team, _ in sorted(
-                thirds, key=lambda item: item[1] + self._rng.random() * 0.01, reverse=True
+                thirds,
+                key=lambda item: item[1] + self._rng.random() * 0.01,
+                reverse=True,
             )[:slots]
         ]
         return winners + runners + best_thirds
@@ -155,8 +161,10 @@ class MonteCarloSimulator:
         """Sample a group-stage result using precomputed cumulative thresholds."""
         r = self._rng.random()
         p_home, p_home_draw = self._group_probs[(home, away)]
-        if r < p_home: return "home"
-        if r < p_home_draw: return "draw"
+        if r < p_home:
+            return "home"
+        if r < p_home_draw:
+            return "draw"
         return "away"
 
     def _knockout_winner(self, home: str, away: str) -> str:

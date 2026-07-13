@@ -69,7 +69,9 @@ def main() -> int:
 
     logger.info(
         "Pipeline complete: %d cleaned matches, %d rated teams, %d feature rows",
-        len(cleaned), len(ratings), len(features),
+        len(cleaned),
+        len(ratings),
+        len(features),
     )
     logger.info("Top 10 teams by Elo:\n%s", ratings.head(10).to_string(index=False))
     return 0

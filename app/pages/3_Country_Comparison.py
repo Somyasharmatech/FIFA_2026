@@ -9,7 +9,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st  # noqa: E402
 
-from app.ui import hero, metric_row, missing_data_warning, section, setup_page  # noqa: E402
+from app.ui import (
+    hero,
+    metric_row,
+    missing_data_warning,
+    section,
+    setup_page,
+)  # noqa: E402
 
 setup_page("Country Comparison", "\U0001f30d")
 
@@ -17,8 +23,11 @@ from app.data_access import get_config, load_table, team_record  # noqa: E402
 from src.simulation.team_state import TeamStateBuilder  # noqa: E402
 from src.visualization import charts  # noqa: E402
 
-hero("Country Comparison", "Put any two nations side by side: strength profile, "
-     "all-time record, and their direct history.")
+hero(
+    "Country Comparison",
+    "Put any two nations side by side: strength profile, "
+    "all-time record, and their direct history.",
+)
 
 cleaned = load_table("cleaned_results")
 elo = load_table("elo_ratings")
@@ -28,8 +37,12 @@ if cleaned is None or elo is None:
 
 teams = sorted(elo["team"].tolist())
 left, right = st.columns(2)
-team_a = left.selectbox("Team A", teams, index=teams.index("Brazil") if "Brazil" in teams else 0)
-team_b = right.selectbox("Team B", teams, index=teams.index("France") if "France" in teams else 1)
+team_a = left.selectbox(
+    "Team A", teams, index=teams.index("Brazil") if "Brazil" in teams else 0
+)
+team_b = right.selectbox(
+    "Team B", teams, index=teams.index("France") if "France" in teams else 1
+)
 if team_a == team_b:
     st.info("Pick two different teams.")
     st.stop()
@@ -57,28 +70,36 @@ def _axes(state) -> list[float]:
 
 categories = ["Elo", "Form", "Attack", "Defense", "Clean sheets", "Scoring"]
 st.plotly_chart(
-    charts.radar_compare(categories, {team_a: _axes(state_a), team_b: _axes(state_b)},
-                         f"{team_a} vs {team_b} \u2014 current profile"),
-    width='stretch',
+    charts.radar_compare(
+        categories,
+        {team_a: _axes(state_a), team_b: _axes(state_b)},
+        f"{team_a} vs {team_b} \u2014 current profile",
+    ),
+    width="stretch",
 )
 
 section("All-time records")
 record_a, record_b = team_record(cleaned, team_a), team_record(cleaned, team_b)
 for team, record, state in ((team_a, record_a, state_a), (team_b, record_b, state_b)):
     st.markdown(f"**{team}**")
-    metric_row([
-        ("Win %", f"{record['win_pct']:.1f}%", f"{record['played']} matches"),
-        ("Draw %", f"{record['draw_pct']:.1f}%", ""),
-        ("Loss %", f"{record['loss_pct']:.1f}%", ""),
-        ("Goals", f"{record['goals_for']}:{record['goals_against']}", "for : against"),
-        ("Clean sheets", str(record["clean_sheets"]), ""),
-        ("Elo", f"{state.elo:.0f}", f"form {state.form_win_rate:.0%}"),
-    ])
+    metric_row(
+        [
+            ("Win %", f"{record['win_pct']:.1f}%", f"{record['played']} matches"),
+            ("Draw %", f"{record['draw_pct']:.1f}%", ""),
+            ("Loss %", f"{record['loss_pct']:.1f}%", ""),
+            (
+                "Goals",
+                f"{record['goals_for']}:{record['goals_against']}",
+                "for : against",
+            ),
+            ("Clean sheets", str(record["clean_sheets"]), ""),
+            ("Elo", f"{state.elo:.0f}", f"form {state.form_win_rate:.0%}"),
+        ]
+    )
 
 section("Head-to-head")
-mask = (
-    ((cleaned["home_team"] == team_a) & (cleaned["away_team"] == team_b))
-    | ((cleaned["home_team"] == team_b) & (cleaned["away_team"] == team_a))
+mask = ((cleaned["home_team"] == team_a) & (cleaned["away_team"] == team_b)) | (
+    (cleaned["home_team"] == team_b) & (cleaned["away_team"] == team_a)
 )
 meetings = cleaned[mask].sort_values("date", ascending=False)
 if meetings.empty:
@@ -95,12 +116,21 @@ else:
     draws = (meetings["outcome"] == "draw").sum()
     import pandas as pd  # noqa: E402
 
-    h2h = pd.DataFrame({"result": [f"{team_a} wins", "Draws", f"{team_b} wins"],
-                        "count": [int(wins_a), int(draws), int(wins_b)]})
+    h2h = pd.DataFrame(
+        {
+            "result": [f"{team_a} wins", "Draws", f"{team_b} wins"],
+            "count": [int(wins_a), int(draws), int(wins_b)],
+        }
+    )
     left, right = st.columns([1, 2])
-    left.plotly_chart(charts.pie_chart(h2h, "result", "count",
-                                       f"{len(meetings)} meetings"), width='stretch')
+    left.plotly_chart(
+        charts.pie_chart(h2h, "result", "count", f"{len(meetings)} meetings"),
+        width="stretch",
+    )
     right.dataframe(
-        meetings[["date", "home_team", "home_score", "away_score", "away_team", "tournament"]]
-        .head(15), width='stretch', height=420,
+        meetings[
+            ["date", "home_team", "home_score", "away_score", "away_team", "tournament"]
+        ].head(15),
+        width="stretch",
+        height=420,
     )

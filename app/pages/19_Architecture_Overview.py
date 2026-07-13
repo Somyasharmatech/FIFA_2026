@@ -13,13 +13,19 @@ from app.ui import hero, section, setup_page
 
 setup_page("Architecture Overview", "🏗️")
 
-hero("Project Architecture & Engineering Overview", "A technical deep dive into the data pipeline, feature engineering, machine learning workflow, and simulation engine powering this platform.")
+hero(
+    "Project Architecture & Engineering Overview",
+    "A technical deep dive into the data pipeline, feature engineering, machine learning workflow, and simulation engine powering this platform.",
+)
 
-st.markdown("""
+st.markdown(
+    """
 <div class="glass-card">
 This platform is a comprehensive end-to-end Machine Learning web application designed to forecast the FIFA 2026 World Cup. It utilizes 150+ years of historical international football data, engineering complex predictive features, and simulating the entire tournament using a Monte Carlo engine.
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 section("1. Technology Stack")
 st.markdown("""

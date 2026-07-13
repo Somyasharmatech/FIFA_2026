@@ -111,5 +111,7 @@ class EloRatingEngine:
             .sort_values("elo", ascending=False)
             .reset_index(drop=True)
         )
-        logger.info("Computed Elo for %d teams over %d matches", len(final), len(matches))
+        logger.info(
+            "Computed Elo for %d teams over %d matches", len(final), len(matches)
+        )
         return enriched, final

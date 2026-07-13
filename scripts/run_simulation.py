@@ -51,7 +51,9 @@ def main() -> int:
     args = parser.parse_args()
 
     config = load_config()
-    setup_logging(config.log_level, config.log_format, config.logs_dir / "simulation.log")
+    setup_logging(
+        config.log_level, config.log_format, config.logs_dir / "simulation.log"
+    )
     REPORTS_DIR.mkdir(exist_ok=True)
     FIGURES_DIR.mkdir(exist_ok=True)
 
@@ -88,15 +90,17 @@ def main() -> int:
     result = simulator.run(groups)
 
     # Persist outputs.
-    result.probabilities.to_csv(REPORTS_DIR / "simulation_probabilities.csv", index=False)
+    result.probabilities.to_csv(
+        REPORTS_DIR / "simulation_probabilities.csv", index=False
+    )
     result.history.to_csv(REPORTS_DIR / "simulation_history.csv", index=False)
     db.ingest_dataframe(result.probabilities, "simulation_probabilities")
-    
+
     # Log timeline snapshot for V2.5
     timeline = result.probabilities.head(10)[["team", "champion_prob"]].copy()
     timeline["date"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     db.append_to_table(timeline, "prediction_timeline")
-    
+
     _plot_champions(result.probabilities.head(12), n_runs)
 
     # Prediction summary (fully derived from simulation output).
@@ -108,7 +112,9 @@ def main() -> int:
     logger.info("Most likely final: %s vs %s", *finalists["team"].tolist())
     logger.info(
         "Predicted champion: %s (%.1f%% of %d simulations)",
-        champion["team"], 100 * champion["champion_prob"], n_runs,
+        champion["team"],
+        100 * champion["champion_prob"],
+        n_runs,
     )
     return 0
 
