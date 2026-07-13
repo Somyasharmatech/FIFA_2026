@@ -86,11 +86,9 @@ def home_advantage_test(matches: pd.DataFrame) -> dict[str, Any]:
     Returns:
         Dict with group means, t-statistic, p-value, and sample size.
     """
-    print("=== DEBUG INSIDE home_advantage_test ===")
-    print("type(matches):", type(matches))
-    print("repr(matches):", repr(matches.head(2)) if isinstance(matches, pd.DataFrame) else repr(matches))
-    print("isinstance(matches, pd.DataFrame):", isinstance(matches, pd.DataFrame))
-
+    assert isinstance(matches, pd.DataFrame), f"Expected matches to be a DataFrame, got {type(matches)}"
+    assert "neutral" in matches.columns, "Missing 'neutral' column in matches"
+    
     frame = matches.copy()
     
     # 6. If duplicate columns exist, remove or rename them before filtering

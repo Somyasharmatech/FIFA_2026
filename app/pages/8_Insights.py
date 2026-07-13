@@ -65,13 +65,9 @@ st.markdown(
 )
 
 section("Home advantage is real")
-print("=== DEBUG BEFORE home_advantage_test ===")
-print("type(cleaned):", type(cleaned))
-print("repr(cleaned):", repr(cleaned.head(2)) if isinstance(cleaned, pd.DataFrame) else repr(cleaned))
-print("isinstance(cleaned, pd.DataFrame):", isinstance(cleaned, pd.DataFrame))
-if isinstance(cleaned, pd.DataFrame):
-    print("len(cleaned):", len(cleaned))
-    print("cleaned.columns:", cleaned.columns.tolist())
+assert isinstance(cleaned, pd.DataFrame), f"Expected DataFrame, got {type(cleaned)}"
+assert "neutral" in cleaned.columns, "Missing 'neutral' column in cleaned"
+assert cleaned.columns.duplicated().sum() == 0, "Duplicate columns in cleaned"
 
 test = home_advantage_test(cleaned)
 significant = (
